@@ -1,0 +1,106 @@
+<div class="support-page">
+  <header class="page-header">
+    <h1>Support Tickets</h1>
+    <p class="subtitle">View and create support tickets.</p>
+    <button type="button" class="btn-primary" (click)="openCreate()">
+      New Ticket
+    </button>
+  </header>
+
+  <!-- Loading & Error -->
+  <div *ngIf="loading()" class="state state-loading">
+    <p>Loading tickets...</p>
+  </div>
+
+  <div *ngIf="error() && !loading()" class="state state-error">
+    <p>{{ error() }}</p>
+  </div>
+
+  <!-- Create Ticket Modal (simple inline card) -->
+  <section *ngIf="creating()" class="card create-card">
+    <h2>Create New Ticket</h2>
+
+    <div class="form-group">
+      <label>Subject</label>
+      <input type="text" [(ngModel)]="createModel.subject" />
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea
+        rows="4"
+        [(ngModel)]="createModel.description"
+        placeholder="Describe your issue in detail"
+      ></textarea>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-secondary" (click)="cancelCreate()">
+        Cancel
+      </button>
+      <button type="button" class="btn-primary" (click)="submitTicket()">
+        Submit Ticket
+      </button>
+    </div>
+  </section>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!loading() && !error() && tickets().length === 0 && !creating()"
+    class="state state-empty"
+  >
+    <h3>No tickets yet</h3>
+    <p>Click “New Ticket” to create your first support request.</p>
+  </div>
+
+  <!-- Tickets List -->
+  <section *ngIf="!loading() && !error() && tickets().length > 0" class="tickets-list">
+    <article *ngFor="let t of tickets()" class="ticket-card">
+      <header>
+        <h2>{{ t.subject }}</h2>
+        <span class="status-pill" [class.open]="t.status === 'Open'" [class.closed]="t.status === 'Closed'">
+          {{ t.status }}
+        </span>
+      </header>
+      <p class="description">{{ t.description }}</p>
+      <footer>
+        <span class="meta">
+          Created: {{ t.createdAt | date : 'medium' }}
+        </span>
+        <span class="meta" *ngIf="t.closedAt">
+          Closed: {{ t.closedAt | date : 'medium' }}
+        </span>
+      </footer>
+    </article>
+  </section>
+
+  <!-- Pagination -->
+  <div
+    *ngIf="totalPages() > 1 && !loading() && !error()"
+    class="pagination"
+  >
+    <button
+      type="button"
+      class="page-btn"
+      [disabled]="pageNumber() === 1"
+      (click)="goToPage(pageNumber() - 1)"
+    >
+      Previous
+    </button>
+
+    <span class="page-info">
+      Page {{ pageNumber() }} of {{ totalPages() }}
+    </span>
+
+    <button
+      type="button"
+      class="page-btn"
+      [disabled]="pageNumber() === totalPages()"
+      (click)="goToPage(pageNumber() + 1)"
+    >
+      Next
+    </button>
+  </div>
+</div>
+
+

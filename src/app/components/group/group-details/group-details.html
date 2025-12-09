@@ -1,0 +1,145 @@
+<div class="group-details-container">
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-state">
+    <p>Loading group details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="error-state">
+    <p>{{ error() }}</p>
+    <button (click)="loadGroupDetails(groupId() || '')">Retry</button>
+  </div>
+
+  <!-- Group Details -->
+  <div *ngIf="!loading() && !error() && group()">
+    <header class="group-details-header">
+      <button class="back-button" (click)="goBack()">← Back</button>
+      <div class="header-content">
+        <h1>{{ group()!.name }}</h1>
+        <p>{{ group()!.description }}</p>
+      </div>
+    </header>
+
+    <div class="group-content">
+      <!-- Group Info Section -->
+      <section class="info-section">
+        <div class="info-grid">
+          <div class="info-card">
+            <span class="info-icon">👥</span>
+            <div>
+              <p class="info-label">Students</p>
+              <p class="info-value">{{ group()!.studentsCount }}</p>
+            </div>
+          </div>
+          <div class="info-card">
+            <span class="info-icon">📚</span>
+            <div>
+              <p class="info-label">Courses</p>
+              <p class="info-value">{{ group()!.coursesCount }}</p>
+            </div>
+          </div>
+          <div class="info-card">
+            <span class="info-icon">📅</span>
+            <div>
+              <p class="info-label">Created</p>
+              <p class="info-value">{{ group()!.createdAt | date : 'short' }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Students Section -->
+      <section class="section">
+        <div class="section-header">
+          <h2>Students ({{ students().length }})</h2>
+          <div class="section-actions">
+            <button class="btn-primary" (click)="toggleShowAddStudent()">
+              {{ showAddStudent() ? 'Cancel' : 'Add Student' }}
+            </button>
+          </div>
+        </div>
+        <div *ngIf="showAddStudent()" class="add-student-form">
+          <p class="hint">Enter student ID or email (paste ID if available)</p>
+          <input
+            type="text"
+            [ngModel]="newStudentEmail()"
+            (ngModelChange)="newStudentEmail.set($event)"
+            placeholder="Student ID or email"
+          />
+          <button class="btn-primary" (click)="addStudent()" [disabled]="adding()">
+            {{ adding() ? 'Adding...' : 'Add' }}
+          </button>
+        </div>
+        <div *ngIf="students().length === 0" class="empty-state">
+          <p>No students in this group yet</p>
+        </div>
+        <div *ngIf="students().length > 0" class="students-list">
+          <div *ngFor="let student of students()" class="student-card">
+            <div class="student-info">
+              <h4>{{ student.fullName }}</h4>
+              <p class="student-email">{{ student.email }}</p>
+            </div>
+            <button
+              (click)="removeStudent(student.userId)"
+              [disabled]="removing() === student.userId"
+              class="btn-remove"
+            >
+              {{ removing() === student.userId ? 'Removing...' : 'Remove' }}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Courses Section -->
+      <section class="section">
+        <div class="section-header">
+          <h2>Courses ({{ courses().length }})</h2>
+          <div class="section-actions">
+            <button class="btn-primary" (click)="toggleShowAddCourse()">
+              {{ showAddCourse() ? 'Cancel' : 'Add Course' }}
+            </button>
+          </div>
+        </div>
+        <div *ngIf="showAddCourse()" class="add-course-form">
+          <label for="available-course">Select a course to add</label>
+          <select
+            id="available-course"
+            [ngModel]="selectedCourseId()"
+            (ngModelChange)="selectedCourseId.set($event)"
+          >
+            <option *ngFor="let c of availableCourses()" [value]="c.courseId">{{ c.title }}</option>
+          </select>
+          <button
+            class="btn-primary"
+            (click)="addCourse()"
+            [disabled]="adding() || !selectedCourseId()"
+          >
+            {{ adding() ? 'Adding...' : 'Add Course' }}
+          </button>
+        </div>
+        <div *ngIf="courses().length === 0" class="empty-state">
+          <p>No courses assigned to this group yet</p>
+        </div>
+        <div *ngIf="courses().length > 0" class="courses-list">
+          <div *ngFor="let course of courses()" class="course-card">
+            <div class="course-info">
+              <h4>{{ course.title }}</h4>
+              <p class="course-description">
+                {{ course.description | slice : 0 : 100
+                }}{{ course.description.length > 100 ? '...' : '' }}
+              </p>
+              <p class="course-instructor">By {{ course.instructorName || 'Unknown' }}</p>
+            </div>
+            <button
+              (click)="removeCourse(course.courseId)"
+              [disabled]="removing() === course.courseId"
+              class="btn-remove"
+            >
+              {{ removing() === course.courseId ? 'Removing...' : 'Remove' }}
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

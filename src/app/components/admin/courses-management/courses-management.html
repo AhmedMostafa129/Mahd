@@ -1,0 +1,79 @@
+<div class="admin-courses-page">
+  <header class="page-header">
+    <h1>Courses Management</h1>
+  </header>
+
+  <!-- Loading & Error -->
+  <div *ngIf="loading()" class="state state-loading">
+    <p>Loading courses...</p>
+  </div>
+
+  <div *ngIf="error() && !loading()" class="state state-error">
+    <p>{{ error() }}</p>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!loading() && !error() && courses().length === 0"
+    class="state state-empty"
+  >
+    <h3>No courses found</h3>
+  </div>
+
+  <!-- Courses Table -->
+  <div *ngIf="!loading() && !error() && courses().length > 0" class="table-wrapper">
+    <table class="courses-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Instructor</th>
+          <th>Price</th>
+          <th>Enrollments</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of courses()">
+          <td>{{ c.title }}</td>
+          <td>{{ c.instructorName }}</td>
+          <td>{{ c.price | number : '1.2-2' }}</td>
+          <td>{{ c.enrollmentCount }}</td>
+          <td>
+            <button type="button" class="btn-danger" (click)="deleteCourse(c.courseId)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div
+    *ngIf="totalPages() > 1 && !loading() && !error()"
+    class="pagination"
+  >
+    <button
+      type="button"
+      class="page-btn"
+      [disabled]="pageNumber() === 1"
+      (click)="goToPage(pageNumber() - 1)"
+    >
+      Previous
+    </button>
+
+    <span class="page-info">
+      Page {{ pageNumber() }} of {{ totalPages() }}
+    </span>
+
+    <button
+      type="button"
+      class="page-btn"
+      [disabled]="pageNumber() === totalPages()"
+      (click)="goToPage(pageNumber() + 1)"
+    >
+      Next
+    </button>
+  </div>
+</div>
+

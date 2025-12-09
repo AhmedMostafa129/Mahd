@@ -1,0 +1,301 @@
+@use '../../../app.scss' as *;
+
+.exam-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #111827;
+  }
+
+  .meta {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: #4b5563;
+  }
+
+  .timer-display {
+    background: #111827;
+    color: #fff;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100px;
+
+    .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #9ca3af;
+    }
+
+    .time {
+      font-family: monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    &.low-time {
+      background: #ef4444;
+    }
+  }
+}
+
+.questions-wrapper {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+// Sidebar Navigator
+.question-navigator {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 20px;
+
+  h3 {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    color: #4b5563;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .nav-btn {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: #6b7280;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: #d1d5db;
+      background: #f9fafb;
+    }
+
+    &.active {
+      border-color: #4f46e5;
+      background: #eef2ff;
+      color: #4f46e5;
+      font-weight: 600;
+    }
+
+    &.answered {
+      background: #ecfdf5;
+      border-color: #10b981;
+      color: #10b981;
+
+      &.active {
+        // If both active and answered, show active style with success color border/text?
+        // Or prioritize active style. Let's keep active style but maybe add a checkmark dot
+        border-color: #4f46e5;
+        color: #4f46e5;
+        position: relative;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 4px;
+          right: 4px;
+          width: 4px;
+          height: 4px;
+          background: #10b981;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+}
+
+.question-area {
+  min-height: 500px;
+}
+
+.question-card {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+}
+
+.question-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+
+  .number {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6b7280;
+  }
+
+  .mark {
+    font-size: 0.85rem;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+  }
+}
+
+.question-text {
+  margin: 0 0 2rem;
+  font-size: 1.15rem;
+  color: #111827;
+  line-height: 1.6;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+  }
+
+  &.selected {
+    background-color: #eef2ff;
+    border-color: #c7d2fe;
+    color: #3730a3;
+  }
+
+  input[type="radio"],
+  input[type="checkbox"] {
+    appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 1px solid #d1d5db;
+    border-radius: 50%; // for radio
+    background: #fff;
+    display: grid;
+    place-content: center;
+    margin: 0;
+
+    &[type="checkbox"] {
+      border-radius: 4px;
+    }
+
+    &:checked {
+      border-color: #4f46e5;
+      background: #4f46e5;
+
+      &::before {
+        content: '';
+        width: 0.5rem;
+        height: 0.5rem;
+        background: #fff;
+        border-radius: 50%;
+        // for checkbox checkmark could be svg, but for now simple dot or using accent-color
+      }
+    }
+  }
+
+  // Custom Radio/Check visual can be enhanced but browser default with accent-color is often enough if custom css fails
+}
+
+.text-answer textarea {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  padding: 1rem;
+  font-size: 1rem;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .btn-nav {
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #374151;
+
+    &:hover:not(:disabled) {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.btn-next {
+      background: #111827;
+      color: #fff;
+      border-color: transparent;
+
+      &:hover {
+        background: #1f2937;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .questions-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .question-navigator {
+    order: 2; // Move to bottom on mobile? Or keep top.
+    position: relative;
+    top: 0;
+  }
+}

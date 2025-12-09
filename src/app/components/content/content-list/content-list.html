@@ -1,0 +1,40 @@
+<div class="content-list-container">
+  <header class="content-header">
+    <button class="back-button" (click)="goBack()">← Back</button>
+    <div>
+      <h1>Content</h1>
+      <p>Browse and manage platform content</p>
+    </div>
+  </header>
+
+  <section class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" [(ngModel)]="search" placeholder="Search content by title or author…" />
+    </div>
+    <select [(ngModel)]="filter" class="filter-select">
+      <option value="all">All</option>
+      <option value="published">Published</option>
+      <option value="draft">Draft</option>
+    </select>
+  </section>
+
+  <div *ngIf="!filtered.length" class="empty-state">
+    <div class="empty-icon">📚</div>
+    <h3>No content found</h3>
+    <p>Try a different search term or add new content.</p>
+  </div>
+
+  <div *ngIf="filtered.length" class="items-grid">
+    <article *ngFor="let it of filtered" class="content-card">
+      <div class="card-left">
+        <h3>{{ it.title }}</h3>
+        <p class="meta">{{ it.type | uppercase }} • {{ it.author }}</p>
+      </div>
+      <div class="card-right">
+        <p class="status" [class.published]="it.status === 'published'">{{ it.status }}</p>
+        <button class="view-btn" (click)="viewItem(it.id)">Open</button>
+      </div>
+    </article>
+  </div>
+</div>

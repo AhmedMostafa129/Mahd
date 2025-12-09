@@ -1,0 +1,78 @@
+<div class="create-course-page">
+  <form (ngSubmit)="onSubmit()" class="course-form" novalidate>
+    <header class="page-header">
+      <h1>Create New Course</h1>
+      <p>Fill in the details to share your knowledge with the world</p>
+    </header>
+
+    <!-- Error Message -->
+    <div *ngIf="error()" class="error-message">
+      ⚠️ {{ error() }}
+    </div>
+
+    <!-- Title -->
+    <div class="form-group">
+      <label for="title">Course Title *</label>
+      <input type="text" id="title" [(ngModel)]="courseData.title" name="title" required
+        placeholder="e.g. Advanced Angular Masterclass" class="form-input" autocomplete="off" />
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description">Course Description *</label>
+      <textarea id="description" [(ngModel)]="courseData.description" name="description" required rows="6"
+        placeholder="What will students learn in this course?" class="form-textarea"></textarea>
+    </div>
+
+    <div class="form-row">
+      <!-- Price -->
+      <div class="form-group half-width">
+        <label for="price">Price (USD) *</label>
+        <div class="input-with-icon">
+          <span class="prefix">$</span>
+          <input type="number" id="price" [(ngModel)]="courseData.price" name="price" required min="0" step="0.01"
+            placeholder="0.00" class="form-input" />
+        </div>
+      </div>
+
+      <!-- Visibility -->
+      <div class="form-group half-width">
+        <label for="visibility">Visibility</label>
+        <select id="visibility" [(ngModel)]="courseData.visibility" name="visibility" class="form-select">
+          <option *ngFor="let opt of visibilityOptions" [value]="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Thumbnail URL -->
+    <div class="form-group">
+      <label for="thumbnailUrl">Thumbnail URL (Optional)</label>
+      <input type="url" id="thumbnailUrl" [(ngModel)]="courseData.thumbnailUrl" name="thumbnailUrl"
+        placeholder="https://example.com/course-image.jpg" class="form-input" />
+      <div *ngIf="courseData.thumbnailUrl" class="thumbnail-preview">
+        <p>Preview:</p>
+        <img [src]="courseData.thumbnailUrl" alt="Thumbnail Preview" onerror="this.style.display='none'">
+      </div>
+    </div>
+
+    <!-- Popular -->
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" [(ngModel)]="courseData.popular" name="popular" />
+        <span>🔥 Mark as Popular Course</span>
+      </label>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" (click)="cancel()" class="btn-secondary">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="submitting()" class="btn-primary">
+        {{ submitting() ? 'Creating...' : 'Create Course' }}
+      </button>
+    </div>
+  </form>
+</div>

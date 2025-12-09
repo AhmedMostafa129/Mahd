@@ -1,0 +1,226 @@
+
+// Variables
+$primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+$card-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+$input-border: #e2e8f0;
+$input-focus: #667eea;
+$text-dark: #2d3748;
+$text-light: #718096;
+
+.edit-course-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 40px;
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: $text-dark;
+      margin: 0 0 10px;
+      background: $primary-gradient;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      color: $text-light;
+      font-size: 1.1rem;
+    }
+  }
+
+  .course-form {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: $card-shadow;
+    width: 100%;
+    max-width: 800px;
+    animation: slideUp 0.5s ease;
+
+    .form-group {
+      margin-bottom: 1.5rem;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: $text-dark;
+        font-size: 0.95rem;
+
+        &::after {
+          content: ' *';
+          color: #e53e3e;
+          display: none;
+        }
+      }
+
+      // Add asterisk only to required labels if needed via class, 
+      // or rely on HTML structure. Let's make it generic for inputs.
+
+      .form-input,
+      .form-textarea,
+      .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid $input-border;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+        color: $text-dark;
+
+        &:focus {
+          outline: none;
+          border-color: $input-focus;
+          background: white;
+          box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        &::placeholder {
+          color: #cbd5e0;
+        }
+      }
+
+      .form-textarea {
+        resize: vertical;
+        min-height: 120px;
+        line-height: 1.6;
+      }
+      
+       .form-select {
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232d3748' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 1rem center;
+        }
+
+      // Checkbox specific styles
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        cursor: pointer;
+        padding: 10px;
+        border: 2px solid $input-border;
+        border-radius: 12px;
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: $input-focus;
+          background: #f8fafc;
+        }
+
+        input[type="checkbox"] {
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+          accent-color: $input-focus;
+        }
+
+        span {
+          font-weight: 500;
+          color: $text-dark;
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid $input-border;
+      justify-content: flex-end;
+
+      button {
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+
+        &.btn-secondary {
+          background: #edf2f7;
+          color: $text-dark;
+
+          &:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+          }
+        }
+
+        &.btn-primary {
+          background: $primary-gradient;
+          color: white;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+          }
+
+          &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+          }
+        }
+      }
+    }
+  }
+
+  .loading-state {
+    text-align: center;
+    color: $text-light;
+    font-size: 1.2rem;
+    margin-top: 3rem;
+  }
+
+  .error-message {
+    background: #fff5f5;
+    color: #c53030;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #c53030;
+    font-weight: 500;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Media Query
+@media (max-width: 768px) {
+  .edit-course-page {
+    padding: 20px 15px;
+    
+    .course-form {
+      padding: 1.5rem;
+    }
+    
+    .form-actions {
+      flex-direction: column-reverse;
+      
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

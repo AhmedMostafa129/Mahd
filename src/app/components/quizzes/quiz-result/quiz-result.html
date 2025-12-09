@@ -1,0 +1,42 @@
+<div class="result-page">
+  <header class="page-header">
+    <h1>Exam Result</h1>
+  </header>
+
+  <!-- Loading & Error -->
+  <div *ngIf="loading()" class="state state-loading">
+    <p>Loading exam result...</p>
+  </div>
+
+  <div *ngIf="error() && !loading()" class="state state-error">
+    <p>{{ error() }}</p>
+  </div>
+
+  <div *ngIf="!loading() && !error() && result() as r" class="result-card">
+    <h2 class="exam-title">{{ r.examTitle || 'Exam' }}</h2>
+    <p class="meta">
+      Submitted on {{ r.submittedAt | date : 'medium' }}
+    </p>
+
+    <div class="score-row">
+      <div class="score-main">
+        <span class="label">Score</span>
+        <span class="value">{{ r.score }} / {{ r.totalMarks }}</span>
+      </div>
+      <div class="score-main">
+        <span class="label">Percentage</span>
+        <span class="value">{{ r.percentage | number : '1.0-1' }}%</span>
+      </div>
+      <div class="score-main">
+        <span class="label">Status</span>
+        <span class="pill" [class.passed]="r.passed" [class.failed]="!r.passed">
+          {{ r.passed ? 'Passed' : 'Failed' }}
+        </span>
+      </div>
+    </div>
+
+    <button type="button" class="btn-primary" (click)="backToDashboard()">
+      Back to Dashboard
+    </button>
+  </div>
+</div>

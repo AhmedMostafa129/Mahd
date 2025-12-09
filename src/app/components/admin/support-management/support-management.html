@@ -1,0 +1,87 @@
+<div class="support-management">
+  <div class="header">
+    <h1>Support Tickets Management</h1>
+  </div>
+
+  <div class="tickets-section">
+    <div class="section-header">
+      <h2>All Tickets</h2>
+      <p class="count">Total: {{ totalCount() }}</p>
+    </div>
+
+    <div *ngIf="loading()" class="loading">Loading tickets...</div>
+    <div *ngIf="error()" class="error">{{ error() }}</div>
+
+    <div *ngIf="!loading() && !error() && tickets().length === 0" class="empty-state">
+      <p>No tickets found.</p>
+    </div>
+
+    <div *ngIf="!loading() && !error() && tickets().length > 0" class="tickets-list">
+      <div *ngFor="let ticket of tickets()" class="ticket-card">
+        <div class="ticket-header">
+          <div class="ticket-info">
+            <h3>{{ ticket.subject }}</h3>
+            <span [class]="'status-badge ' + getStatusClass(ticket.status)">
+              {{ ticket.status }}
+            </span>
+          </div>
+          <div class="ticket-actions">
+            <button
+              *ngIf="ticket.status !== 'resolved' && ticket.status !== 'closed'"
+              class="btn-assign"
+              (click)="openAssignModal(ticket)"
+            >
+              Assign
+            </button>
+            <button
+              *ngIf="ticket.status !== 'resolved' && ticket.status !== 'closed'"
+              class="btn-resolve"
+              (click)="resolveTicket(ticket.ticketId)"
+            >
+              Resolve
+            </button>
+            <button class="btn-delete" (click)="deleteTicket(ticket.ticketId)">Delete</button>
+          </div>
+        </div>
+        <div class="ticket-body">
+          <p class="description">{{ ticket.description }}</p>
+          <div class="ticket-meta">
+            <span><strong>User ID:</strong> {{ ticket.userId }}</span>
+            <span *ngIf="ticket.assignedTo"><strong>Assigned To:</strong> {{ ticket.assignedTo }}</span>
+            <span><strong>Created:</strong> {{ formatDate(ticket.createdAt) }}</span>
+            <span *ngIf="ticket.closedAt"><strong>Closed:</strong> {{ formatDate(ticket.closedAt) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages() > 1" class="pagination">
+      <button (click)="goToPage(pageNumber() - 1)" [disabled]="pageNumber() === 1">Previous</button>
+      <span>Page {{ pageNumber() }} of {{ totalPages() }}</span>
+      <button (click)="goToPage(pageNumber() + 1)" [disabled]="pageNumber() === totalPages()">Next</button>
+    </div>
+  </div>
+
+  <!-- Assign Modal -->
+  <div *ngIf="showAssignModal()" class="modal-overlay" (click)="closeAssignModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Assign Ticket</h3>
+      <p><strong>Subject:</strong> {{ selectedTicket()?.subject }}</p>
+      <div class="form-group">
+        <label>Select Admin:</label>
+        <select [(ngModel)]="selectedAdminId" class="form-select">
+          <option value="">-- Select Admin --</option>
+          <option *ngFor="let admin of admins()" [value]="admin.userId">
+            {{ admin.fullName || admin.email }}
+          </option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeAssignModal()">Cancel</button>
+        <button class="btn-confirm" (click)="assignTicket()" [disabled]="!selectedAdminId()">Assign</button>
+      </div>
+    </div>
+  </div>
+</div>
+

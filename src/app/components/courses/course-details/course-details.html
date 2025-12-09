@@ -1,0 +1,90 @@
+<div class="course-details-page">
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-state">
+    <p>Loading course details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="error-state">
+    <p>{{ error() }}</p>
+    <button (click)="loadCourseDetails(_route.snapshot.paramMap.get('id') || '')">Retry</button>
+  </div>
+
+  <!-- Course Details -->
+  <div *ngIf="!loading() && !error() && course()">
+    <!-- Hero Section -->
+    <section class="course-hero">
+      <div class="course-thumbnail" *ngIf="course()!.thumbnailUrl">
+        <img [src]="course()!.thumbnailUrl" [alt]="course()!.title" [attr.title]="course()!.title" />
+      </div>
+      <div class="course-header">
+        <h1 class="course-title">{{ course()!.title }}</h1>
+        <p class="course-instructor">👤 <a href="#" (click)="$event.preventDefault(); navigateToProfile(course()!.instructorId, $event)">{{ course()!.instructorName || 'Unknown Instructor' }}</a></p>
+
+        <div class="course-meta">
+          <span class="rating">⭐ {{ course()!.averageRating | number:'1.1-1' }}</span>
+          <span class="enrollments">👥 {{ course()!.enrollmentCount }} students</span>
+          <span class="lessons">📖 {{ lessons().length > 0 ? lessons().length : course()!.lessonsCount }} lessons</span>
+          <span *ngIf="course()!.popular" class="popular-badge">🔥 Popular</span>
+        </div>
+
+        <div class="course-price-section">
+          <span class="course-price">{{ formatPrice(course()!.price) }}</span>
+
+          <div class="action-buttons">
+            <button *ngIf="!isEnrolled()" (click)="enrollInCourse()" [disabled]="enrolling()" class="btn-enroll">
+              {{ enrolling() ? 'Enrolling...' : 'Enroll Now' }}
+            </button>
+            <button *ngIf="isEnrolled()" (click)="navigateToContent()" class="btn-start">
+              Start Learning
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Course Description -->
+    <section class="course-description">
+      <h2>About This Course</h2>
+      <p>{{ course()!.description }}</p>
+    </section>
+
+    <!-- Course Lessons -->
+    <section class="course-lessons" *ngIf="lessons().length > 0">
+      <h2>Course Content</h2>
+      <p class="lessons-count">{{ lessons().length }} lessons</p>
+
+      <div class="lessons-list">
+        <div *ngFor="let lesson of lessons(); let i = index" class="lesson-item">
+          <div class="lesson-number">{{ i + 1 }}</div>
+          <div class="lesson-info">
+            <h3>{{ lesson.title }}</h3>
+            <div class="lesson-meta">
+              <span class="lesson-type">{{ getContentTypeLabel(lesson.contentType) }}</span>
+              <span class="lesson-duration">⏱️ {{ lesson.durationMinutes }} min</span>
+            </div>
+          </div>
+          <button *ngIf="isEnrolled()" (click)="navigateToContent()" class="btn-view">
+            View
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Course Reviews -->
+    <section class="course-reviews-section">
+      <app-course-reviews [courseId]="course()!.courseId"></app-course-reviews>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="course-cta" *ngIf="!isEnrolled()">
+      <div class="cta-content">
+        <h2>Ready to start learning?</h2>
+        <p>Join {{ course()!.enrollmentCount }} students in this course</p>
+        <button (click)="enrollInCourse()" [disabled]="enrolling()" class="btn-enroll-large">
+          {{ enrolling() ? 'Enrolling...' : 'Enroll Now - ' + formatPrice(course()!.price) }}
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

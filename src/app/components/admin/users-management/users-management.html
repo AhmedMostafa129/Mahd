@@ -1,0 +1,90 @@
+<div class="admin-users-page">
+  <header class="page-header">
+    <h1>Users Management</h1>
+    <div class="search-row">
+      <input
+        type="text"
+        placeholder="Search by email"
+        [(ngModel)]="searchEmail"
+      />
+      <button type="button" class="btn-secondary" (click)="searchByEmail()">
+        Search
+      </button>
+      <button type="button" class="btn-outline" (click)="loadUsers(1)">
+        Reset
+      </button>
+    </div>
+  </header>
+
+  <!-- Loading & Error -->
+  <div *ngIf="loading()" class="state state-loading">
+    <p>Loading users...</p>
+  </div>
+
+  <div *ngIf="error() && !loading()" class="state state-error">
+    <p>{{ error() }}</p>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!loading() && !error() && users().length === 0"
+    class="state state-empty"
+  >
+    <h3>No users found</h3>
+  </div>
+
+  <!-- Users Table -->
+  <div *ngIf="!loading() && !error() && users().length > 0" class="table-wrapper">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of users()">
+          <td>{{ u.fullName }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.role }}</td>
+          <td>
+            <button type="button" class="btn-danger" (click)="deleteUser(u.userId)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div
+    *ngIf="totalPages() > 1 && !loading() && !error()"
+    class="pagination"
+  >
+    <button
+      type="button"
+      class="page-btn"
+      [disabled]="pageNumber() === 1"
+      (click)="goToPage(pageNumber() - 1)"
+    >
+      Previous
+    </button>
+
+    <span class="page-info">
+      Page {{ pageNumber() }} of {{ totalPages() }}
+    </span>
+
+    <button
+      type="button"
+      class="page-btn"
+      [disabled]="pageNumber() === totalPages()"
+      (click)="goToPage(pageNumber() + 1)"
+    >
+      Next
+    </button>
+  </div>
+</div>
+

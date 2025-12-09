@@ -1,0 +1,49 @@
+<div class="form-container">
+  <div class="form-header">
+    <h1>{{ isEditMode() ? 'Edit Group' : 'Create New Group' }}</h1>
+    <p>Fill in the group details below</p>
+  </div>
+
+  <div class="form-content">
+    <form [formGroup]="groupForm" (ngSubmit)="onSubmit()">
+
+      <!-- Group Name -->
+      <div class="form-group">
+        <label for="name">Group Name <span class="required">*</span></label>
+        <div class="input-wrapper">
+          <span class="input-icon">🏷️</span>
+          <input type="text" id="name" formControlName="name" placeholder="Enter group name"
+            [class.error]="isFieldInvalid('name')">
+        </div>
+        <div *ngIf="isFieldInvalid('name')" class="error-message">
+          Group name is required (min 3 characters).
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description">Description <span class="required">*</span></label>
+        <div class="input-wrapper">
+          <span class="input-icon" style="top: 1.2rem;">📝</span>
+          <textarea id="description" formControlName="description" placeholder="Enter group description..."
+            [class.error]="isFieldInvalid('description')"></textarea>
+        </div>
+        <div *ngIf="isFieldInvalid('description')" class="error-message">
+          Description is required.
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="groupForm.invalid || submitting()">
+          <span *ngIf="!submitting()">{{ isEditMode() ? 'Save Changes' : 'Create Group' }}</span>
+          <span *ngIf="submitting()" class="loading">
+            <div class="spinner"></div> Saving...
+          </span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="groups-container">
+  <header class="groups-header">
+    <div>
+      <button class="back-button" (click)="goBack()">← Back</button>
+      <h1>Groups</h1>
+      <p>Manage and explore your learning groups</p>
+    </div>
+    <button (click)="createGroup()" class="btn-primary">+ Create Group</button>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-state">
+    <p>Loading groups...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="error-state">
+    <p>{{ error() }}</p>
+    <button (click)="loadGroups()">Retry</button>
+  </div>
+
+  <!-- Groups List -->
+  <div *ngIf="!loading() && !error()">
+    <section class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Search groups by name or description…"
+        />
+      </div>
+    </section>
+
+    <div *ngIf="filteredGroups.length === 0" class="empty-state">
+      <div class="empty-icon">🧩</div>
+      <h3>No groups found</h3>
+      <p *ngIf="searchTerm">No groups match your search criteria</p>
+      <p *ngIf="!searchTerm">Create your first group to get started</p>
+      <button *ngIf="!searchTerm" (click)="createGroup()" class="btn-primary">Create Group</button>
+    </div>
+
+    <div *ngIf="filteredGroups.length > 0" class="groups-grid">
+      <article *ngFor="let group of filteredGroups" class="group-card" (click)="viewGroupDetails(group.groupId)">
+        <div class="group-card-header">
+          <h3>{{ group.name }}</h3>
+        </div>
+        <p class="group-description">{{ group.description }}</p>
+        <div class="group-meta">
+          <div class="meta-item">
+            <span class="meta-icon">👥</span>
+            <span>{{ group.studentsCount }} students</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">📚</span>
+            <span>{{ group.coursesCount }} courses</span>
+          </div>
+        </div>
+        <div class="group-footer">
+          <span class="created-date">Created {{ group.createdAt | date:'short' }}</span>
+          <button class="view-button" type="button" (click)="viewGroupDetails(group.groupId); $event.stopPropagation()">
+            View Details →
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages() > 1" class="pagination">
+      <button
+        (click)="pageNumber.set(pageNumber() - 1); loadGroups()"
+        [disabled]="pageNumber() === 1"
+        class="pagination-button"
+      >
+        ← Previous
+      </button>
+      <span class="pagination-info">
+        Page {{ pageNumber() }} of {{ totalPages() }}
+      </span>
+      <button
+        (click)="pageNumber.set(pageNumber() + 1); loadGroups()"
+        [disabled]="pageNumber() === totalPages()"
+        class="pagination-button"
+      >
+        Next →
+      </button>
+    </div>
+  </div>
+</div>

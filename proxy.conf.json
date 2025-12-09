@@ -1,0 +1,12 @@
+{
+    "/api": {
+        "target": "http://mahd.runasp.net",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug",
+        "followRedirects": true,
+        "pathRewrite": {
+            "^/api": "/api"
+        }
+    }
+}

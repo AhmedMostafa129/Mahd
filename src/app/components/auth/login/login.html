@@ -1,0 +1,85 @@
+<section class="login-page">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="login-shell">
+    <div class="brand-panel">
+      <p class="eyebrow">Learnhub · Admin access</p>
+      <h1>Welcome back</h1>
+      <p class="brand-subtitle">
+        Sign in to manage courses, students, and analytics from your unified
+        dashboard.
+      </p>
+
+      <ul class="brand-points">
+        <li>
+          <span>📚</span>
+          Curate and organize all learning content in one place
+        </li>
+        <li>
+          <span>👥</span>
+          Track cohorts, groups, and learner progress in real time
+        </li>
+        <li>
+          <span>📈</span>
+          Monitor performance with clean, visual analytics
+        </li>
+      </ul>
+    </div>
+
+    <div class="card-panel">
+      <header class="card-header">
+        <p class="badge">Admin login</p>
+        <h2>Sign in to your account</h2>
+        <p>Use your email and password to continue.</p>
+      </header>
+
+      <form [formGroup]="loginForm" (ngSubmit)="handleSubmit()" novalidate>
+        <label class="field" [ngClass]="{'invalid': emailControl?.invalid && (emailControl?.dirty || emailControl?.touched)}">
+          <span>Email address</span>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+          />
+          <small *ngIf="emailControl?.hasError('required')">This field is required</small>
+          <small *ngIf="emailControl?.hasError('email')">Please enter a valid email</small>
+        </label>
+
+        <label class="field" [ngClass]="{'invalid': passwordControl?.invalid && (passwordControl?.dirty || passwordControl?.touched)}">
+          <span>Password</span>
+          <input
+            type="password"
+            formControlName="password"
+            placeholder="••••••"
+            autocomplete="current-password"
+          />
+          <small *ngIf="passwordControl?.hasError('required')">This field is required</small>
+          <small *ngIf="passwordControl?.hasError('pattern')">Must be at least 6 characters</small>
+        </label>
+
+        <div class="card-footer">
+          <button class="primary-btn" type="submit" [disabled]="loginForm.invalid || isLoading">
+            <span *ngIf="!isLoading">Sign in</span>
+            <span *ngIf="isLoading" class="spinner"></span>
+            <span *ngIf="isLoading">Checking your details…</span>
+          </button>
+
+          <button class="ghost-btn" type="button" routerLink="/register">
+            Need an account? Create one
+          </button>
+        </div>
+
+        <p class="hint">
+          Demo only – any valid-looking email and password will sign you in.
+        </p>
+
+        <div *ngIf="msgError" class="alert error">
+          {{ msgError }}
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+

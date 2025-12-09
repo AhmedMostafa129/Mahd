@@ -1,0 +1,128 @@
+<div class="reports">
+  <div class="header">
+    <h1>Reports & Analytics</h1>
+    <button class="btn-export" (click)="exportData()">Export Data</button>
+  </div>
+
+  <div *ngIf="loading()" class="loading">Loading reports...</div>
+  <div *ngIf="error()" class="error">{{ error() }}</div>
+
+  <div *ngIf="!loading() && !error() && dashboardData()" class="reports-content">
+    <!-- Overview Statistics -->
+    <div class="statistics-section">
+      <h2>Overview Statistics</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>Total Users</h3>
+          <p class="value">{{ dashboardData()!.totalUsers }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Total Students</h3>
+          <p class="value">{{ dashboardData()!.totalStudents }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Total Instructors</h3>
+          <p class="value">{{ dashboardData()!.totalInstructors }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Total Courses</h3>
+          <p class="value">{{ dashboardData()!.totalCourses }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Total Enrollments</h3>
+          <p class="value">{{ dashboardData()!.totalEnrollments }}</p>
+        </div>
+        <div class="stat-card revenue">
+          <h3>Total Revenue</h3>
+          <p class="value">{{ formatCurrency(dashboardData()!.totalRevenue) }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Active Subscriptions</h3>
+          <p class="value">{{ dashboardData()!.activeSubscriptions }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Pending Tickets</h3>
+          <p class="value">{{ dashboardData()!.pendingSupportTickets }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Growth Chart -->
+    <div class="chart-section">
+      <h2>User Growth (Last 12 Months)</h2>
+      <div class="chart-container">
+        <div class="chart-bars">
+          <div
+            *ngFor="let growth of dashboardData()!.userGrowthByMonth"
+            class="chart-bar-item"
+          >
+            <div class="bar-wrapper">
+              <div
+                class="bar"
+                [style.height]="getGrowthHeight(growth.newUsers)"
+                [title]="growth.newUsers + ' users'"
+              ></div>
+            </div>
+            <span class="bar-label">{{ getMonthName(growth.month) }}</span>
+            <span class="bar-value">{{ growth.newUsers }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Statistics -->
+    <div *ngIf="paymentStats()" class="payment-stats-section">
+      <h2>Payment Statistics</h2>
+      <div class="payment-stats-grid">
+        <div class="stat-card">
+          <h3>Total Payments</h3>
+          <p class="value">{{ paymentStats()!.totalPayments }}</p>
+        </div>
+        <div class="stat-card revenue">
+          <h3>Total Revenue</h3>
+          <p class="value">{{ formatCurrency(paymentStats()!.totalRevenue) }}</p>
+        </div>
+        <div class="stat-card success">
+          <h3>Successful</h3>
+          <p class="value">{{ paymentStats()!.successfulPayments }}</p>
+        </div>
+        <div class="stat-card failed">
+          <h3>Failed</h3>
+          <p class="value">{{ paymentStats()!.failedPayments }}</p>
+        </div>
+        <div class="stat-card pending">
+          <h3>Pending</h3>
+          <p class="value">{{ paymentStats()!.pendingPayments }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Instructors -->
+    <div class="top-section">
+      <h2>Top Instructors</h2>
+      <div class="top-list">
+        <div *ngFor="let instructor of dashboardData()!.topInstructors" class="top-item">
+          <div class="top-info">
+            <h4><a href="#" (click)="$event.preventDefault(); navigateToProfile(instructor.instructorId, $event)">{{ instructor.instructorName }}</a></h4>
+            <p>{{ instructor.totalStudents }} students</p>
+          </div>
+          <div class="top-value">{{ formatCurrency(instructor.totalRevenue) }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Courses -->
+    <div class="top-section">
+      <h2>Top Courses</h2>
+      <div class="top-list">
+        <div *ngFor="let course of dashboardData()!.topCourses" class="top-item">
+          <div class="top-info">
+            <h4>{{ course.courseTitle }}</h4>
+            <p>{{ course.enrollmentCount }} enrollments</p>
+          </div>
+          <div class="top-value">{{ formatCurrency(course.revenue) }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

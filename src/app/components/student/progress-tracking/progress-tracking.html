@@ -1,0 +1,83 @@
+<div class="progress-page">
+  <header class="page-header">
+    <h1>Progress Tracking</h1>
+    <p class="subtitle">
+      View your progress across all enrolled courses.
+    </p>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="state state-loading">
+    <p>Loading progress data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="state state-error">
+    <p>{{ error() }}</p>
+  </div>
+
+  <div *ngIf="!loading() && !error()" class="content-layout">
+    <aside class="courses-list">
+      <h2 class="section-title">My Courses</h2>
+
+      <div
+        *ngIf="enrollments().length === 0"
+        class="state state-empty small"
+      >
+        <p>No enrollments yet.</p>
+      </div>
+
+      <ul *ngIf="enrollments().length > 0">
+        <li
+          *ngFor="let e of enrollments()"
+          (click)="selectEnrollment(e)"
+          [class.selected]="selectedEnrollment()?.enrollmentId === e.enrollmentId"
+        >
+          <div class="course-name">{{ e.courseName || 'Course' }}</div>
+          <div class="course-progress">
+            {{ e.progressPercentage | number : '1.0-0' }}%
+            <span *ngIf="e.isCompleted" class="badge-completed">Completed</span>
+          </div>
+        </li>
+      </ul>
+    </aside>
+
+    <section class="details" *ngIf="selectedEnrollment() as selected">
+      <h2 class="section-title">Course Details</h2>
+
+      <div class="detail-card">
+        <h3>{{ selected.courseName || 'Course' }}</h3>
+        <p>
+          Enrolled on
+          {{ selected.enrollmentDate | date : 'mediumDate' }}
+        </p>
+
+        <div class="progress-wrapper">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [style.width.%]="selected.progressPercentage"
+            ></div>
+          </div>
+          <span class="progress-label">
+            {{ selected.progressPercentage | number : '1.0-0' }}%
+          </span>
+        </div>
+
+        <p *ngIf="selected.isCompleted" class="completed-text">
+          Course completed on
+          {{ (selected.completedAt || selected.enrollmentDate) | date : 'mediumDate' }}.
+        </p>
+        <p *ngIf="!selected.isCompleted" class="completed-text">
+          Keep going! You're making great progress.
+        </p>
+      </div>
+    </section>
+
+    <section class="details" *ngIf="!selectedEnrollment() && enrollments().length > 0">
+      <div class="state state-empty small">
+        <p>Select a course from the list to view detailed progress.</p>
+      </div>
+    </section>
+  </div>
+</div>

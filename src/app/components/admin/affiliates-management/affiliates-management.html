@@ -1,0 +1,86 @@
+<div class="affiliates-management">
+  <div class="header">
+    <h1>Affiliates Management</h1>
+  </div>
+
+  <div class="affiliates-section">
+    <div class="section-header">
+      <h2>All Affiliates</h2>
+      <p class="count">Total: {{ totalCount() }}</p>
+    </div>
+
+    <div *ngIf="loading()" class="loading">Loading affiliates...</div>
+    <div *ngIf="error()" class="error">{{ error() }}</div>
+
+    <div *ngIf="!loading() && !error() && affiliates().length === 0" class="empty-state">
+      <p>No affiliates found.</p>
+    </div>
+
+    <div *ngIf="!loading() && !error() && affiliates().length > 0" class="affiliates-table-container">
+      <table class="affiliates-table">
+        <thead>
+          <tr>
+            <th>Affiliate ID</th>
+            <th>User ID</th>
+            <th>Affiliate Code</th>
+            <th>Total Commission</th>
+            <th>Created At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let affiliate of affiliates()">
+            <td>{{ affiliate.affiliateId }}</td>
+            <td>{{ affiliate.userId }}</td>
+            <td>
+              <code class="affiliate-code">{{ affiliate.affiliateCode }}</code>
+            </td>
+            <td class="commission">{{ formatCurrency(affiliate.totalCommission) }}</td>
+            <td>{{ formatDate(affiliate.createdAt) }}</td>
+            <td>
+              <button class="btn-payout" (click)="openPayoutModal(affiliate)">Process Payout</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages() > 1" class="pagination">
+      <button (click)="goToPage(pageNumber() - 1)" [disabled]="pageNumber() === 1">Previous</button>
+      <span>Page {{ pageNumber() }} of {{ totalPages() }}</span>
+      <button (click)="goToPage(pageNumber() + 1)" [disabled]="pageNumber() === totalPages()">Next</button>
+    </div>
+  </div>
+
+  <!-- Payout Modal -->
+  <div *ngIf="showPayoutModal()" class="modal-overlay" (click)="closePayoutModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Process Payout</h3>
+      <div *ngIf="selectedAffiliate()" class="affiliate-info">
+        <p><strong>Affiliate ID:</strong> {{ selectedAffiliate()!.affiliateId }}</p>
+        <p><strong>Affiliate Code:</strong> <code>{{ selectedAffiliate()!.affiliateCode }}</code></p>
+        <p><strong>Total Commission:</strong> {{ formatCurrency(selectedAffiliate()!.totalCommission) }}</p>
+      </div>
+      <div class="form-group">
+        <label>Payout Amount (optional, leave empty for full commission):</label>
+        <input
+          type="number"
+          [(ngModel)]="payoutAmount"
+          [max]="selectedAffiliate()?.totalCommission || 0"
+          placeholder="Enter amount"
+          min="0"
+          step="0.01"
+        />
+        <small *ngIf="selectedAffiliate()">
+          Maximum: {{ formatCurrency(selectedAffiliate()!.totalCommission) }}
+        </small>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closePayoutModal()">Cancel</button>
+        <button class="btn-confirm" (click)="processPayout()">Process Payout</button>
+      </div>
+    </div>
+  </div>
+</div>
+

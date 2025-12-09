@@ -1,0 +1,203 @@
+<div class="admin-dashboard">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">LH</div>
+      <div>
+        <h1>LearnHub</h1>
+        <p>Admin Panel</p>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-item active">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      <a class="nav-item" (click)="navigateToUsers()">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Users</span>
+      </a>
+      <a class="nav-item" (click)="navigateToCourses()">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Courses</span>
+      </a>
+      <a class="nav-item" (click)="navigateToPayments()">
+        <span class="nav-icon">💰</span>
+        <span class="nav-label">Payments</span>
+      </a>
+      <a class="nav-item" (click)="navigateToSupport()">
+        <span class="nav-icon">🎫</span>
+        <span class="nav-label">Support</span>
+        <span class="nav-badge" *ngIf="dashboardData()?.pendingSupportTickets">
+          {{ dashboardData()!.pendingSupportTickets }}
+        </span>
+      </a>
+      <a class="nav-item" (click)="navigateToReports()">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">Reports</span>
+      </a>
+    </nav>
+
+    <button class="sign-out" type="button" (click)="handleSignOut()">Sign Out</button>
+  </aside>
+
+  <main class="dashboard">
+    <!-- Loading State -->
+    <div *ngIf="loading()" class="loading-state">
+      <p>Loading dashboard...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error() && !loading()" class="error-state">
+      <p>{{ error() }}</p>
+      <button (click)="loadDashboardData()">Retry</button>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div *ngIf="!loading() && !error() && dashboardData()">
+      <header class="dashboard-header">
+        <div>
+          <h1 class="page-title">Welcome back! 👋</h1>
+          <p class="page-subtitle">Here's what's happening with your learning platform today.</p>
+        </div>
+      </header>
+
+      <!-- Statistics Cards -->
+      <section class="summary-grid">
+        <article class="summary-card">
+          <div class="summary-icon">👥</div>
+          <div>
+            <p class="summary-label">Total Users</p>
+            <p class="summary-value">{{ dashboardData()!.totalUsers }}</p>
+          </div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-icon">👤</div>
+          <div>
+            <p class="summary-label">Total Students</p>
+            <p class="summary-value">{{ dashboardData()!.totalStudents }}</p>
+          </div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-icon">🎓</div>
+          <div>
+            <p class="summary-label">Total Instructors</p>
+            <p class="summary-value">{{ dashboardData()!.totalInstructors }}</p>
+          </div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-icon">📚</div>
+          <div>
+            <p class="summary-label">Total Courses</p>
+            <p class="summary-value">{{ dashboardData()!.totalCourses }}</p>
+          </div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-icon">📖</div>
+          <div>
+            <p class="summary-label">Total Enrollments</p>
+            <p class="summary-value">{{ dashboardData()!.totalEnrollments }}</p>
+          </div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-icon">💰</div>
+          <div>
+            <p class="summary-label">Total Revenue</p>
+            <p class="summary-value">{{ formatRevenue(dashboardData()!.totalRevenue) }}</p>
+          </div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-icon">🔔</div>
+          <div>
+            <p class="summary-label">Active Subscriptions</p>
+            <p class="summary-value">{{ dashboardData()!.activeSubscriptions }}</p>
+          </div>
+        </article>
+        <article class="summary-card">
+          <div class="summary-icon">🎫</div>
+          <div>
+            <p class="summary-label">Pending Tickets</p>
+            <p class="summary-value" [class.warn]="dashboardData()!.pendingSupportTickets > 0">
+              {{ dashboardData()!.pendingSupportTickets }}
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <!-- Charts and Lists Section -->
+      <section class="content-row">
+        <!-- User Growth Chart -->
+        <article class="panel" *ngIf="dashboardData()!.userGrowthByMonth.length > 0">
+          <header class="panel-header">
+            <h2>User Growth</h2>
+            <span class="panel-label">Last 12 months</span>
+          </header>
+          <div class="growth-chart">
+            <div class="chart-container">
+              <div *ngFor="let growth of dashboardData()!.userGrowthByMonth" class="chart-bar">
+                <div class="bar" [style.height.%]="getGrowthHeight(growth.newUsers)">
+                  <span class="bar-value">{{ growth.newUsers }}</span>
+                </div>
+                <span class="bar-label">{{ getMonthName(growth.month) }} {{ growth.year }}</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Top Instructors -->
+        <article class="panel">
+          <header class="panel-header">
+            <h2>Top Instructors</h2>
+          </header>
+          <div *ngIf="dashboardData()!.topInstructors.length === 0" class="empty-state">
+            <p>No instructors yet</p>
+          </div>
+          <div *ngIf="dashboardData()!.topInstructors.length > 0" class="instructors-list">
+            <div *ngFor="let instructor of dashboardData()!.topInstructors" class="instructor-item">
+              <div class="instructor-info">
+                <h3>{{ instructor.instructorName }}</h3>
+                <div class="instructor-stats">
+                  <span>Courses: {{ instructor.totalCourses }}</span>
+                  <span>Students: {{ instructor.totalStudents }}</span>
+                  <span>Revenue: {{ formatRevenue(instructor.totalRevenue) }}</span>
+                  <span>Rating: ⭐ {{ instructor.averageRating | number:'1.1-1' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Top Courses -->
+      <section class="content-section">
+        <div class="section-header">
+          <h2>Top Courses</h2>
+          <button class="btn-secondary" (click)="navigateToCourses()">View All</button>
+        </div>
+        <div *ngIf="dashboardData()!.topCourses.length === 0" class="empty-state">
+          <div class="empty-icon">📚</div>
+          <h3>No courses yet</h3>
+        </div>
+        <div *ngIf="dashboardData()!.topCourses.length > 0" class="courses-list">
+          <div *ngFor="let course of dashboardData()!.topCourses" class="course-card">
+            <div class="course-info">
+              <h3>{{ course.courseTitle }}</h3>
+              <p class="instructor">By {{ course.instructorName }}</p>
+              <div class="course-stats">
+                <span class="stat-item">
+                  <strong>Enrollments:</strong> {{ course.enrollmentCount }}
+                </span>
+                <span class="stat-item">
+                  <strong>Revenue:</strong> {{ formatRevenue(course.revenue) }}
+                </span>
+                <span class="stat-item">
+                  <strong>Rating:</strong> ⭐ {{ course.averageRating | number:'1.1-1' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

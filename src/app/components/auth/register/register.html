@@ -1,0 +1,102 @@
+<section class="register-page">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="register-shell">
+    <div class="hero-panel">
+      <p class="eyebrow">Digital learning platform · 2025</p>
+      <h1>Kick off your learning journey with Learnhub</h1>
+      <p class="hero-subtitle">
+        Create your account and jump straight into the dashboard to monitor content,
+        learners, and performance from a single place.
+      </p>
+
+      <ul class="hero-features">
+        <li>
+          <span>🎯</span>
+          Personalized experience for every role (student, instructor, admin)
+        </li>
+        <li>
+          <span>⚡</span>
+          Fast, modern UX with real-time analytics
+        </li>
+        <li>
+          <span>🔒</span>
+          Secure infrastructure protecting learners and content
+        </li>
+      </ul>
+    </div>
+
+    <div class="form-panel">
+      <div class="form-header">
+        <p class="badge">Create account</p>
+        <h2>Register for the platform</h2>
+        <p>Fill the form to activate your account and access the dashboard.</p>
+      </div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="registerSubmit()" novalidate>
+        <div class="form-grid">
+          <label class="field" [ngClass]="{'invalid': fullNameControl?.invalid && (fullNameControl?.dirty || fullNameControl?.touched)}">
+            <span>Full Name</span>
+            <input type="text" formControlName="fullName" placeholder="e.g. Alex Smith" />
+            <small *ngIf="fullNameControl?.hasError('required')">This field is required</small>
+            <small *ngIf="fullNameControl?.hasError('minlength')">Minimum 3 characters</small>
+            <small *ngIf="fullNameControl?.hasError('maxlength')">Maximum 20 characters</small>
+          </label>
+
+          <label class="field" [ngClass]="{'invalid': emailControl?.invalid && (emailControl?.dirty || emailControl?.touched)}">
+            <span>Email address</span>
+            <input type="email" formControlName="email" placeholder="you@example.com" />
+            <small *ngIf="emailControl?.hasError('required')">This field is required</small>
+            <small *ngIf="emailControl?.hasError('email')">Please enter a valid email</small>
+          </label>
+
+          <label class="field" [ngClass]="{'invalid': passwordControl?.invalid && (passwordControl?.dirty || passwordControl?.touched)}">
+            <span>Password</span>
+            <input type="password" formControlName="password" placeholder="••••••" />
+            <small *ngIf="passwordControl?.hasError('required')">This field is required</small>
+            <small *ngIf="passwordControl?.hasError('pattern')">Must be at least 6 characters</small>
+          </label>
+
+          <label class="field" [ngClass]="{'invalid': confirmPasswordControl?.invalid && (confirmPasswordControl?.dirty || confirmPasswordControl?.touched) || registerForm.hasError('passwordMismatch')}">
+            <span>Confirm password</span>
+            <input type="password" formControlName="confirmPassword" placeholder="••••••" />
+            <small *ngIf="confirmPasswordControl?.hasError('required')">This field is required</small>
+            <small *ngIf="registerForm.hasError('passwordMismatch')">Passwords do not match</small>
+          </label>
+
+          <label class="field" [ngClass]="{'invalid': roleControl?.invalid && (roleControl?.dirty || roleControl?.touched)}">
+            <span>Role</span>
+            <select formControlName="role">
+              <option value="" disabled selected hidden>Select account type</option>
+              <option value="2">Student</option>
+              <option value="1">Instructor</option>
+              <option value="0">Platform Admin</option>
+            </select>
+            <small *ngIf="roleControl?.hasError('required')">Please choose a role</small>
+          </label>
+        </div>
+
+        <button class="submit-btn" type="submit" [disabled]="registerForm.invalid || isLoading">
+          <span *ngIf="!isLoading">Create account</span>
+          <span *ngIf="isLoading" class="spinner"></span>
+          <span *ngIf="isLoading">Setting things up…</span>
+        </button>
+
+        <p class="form-disclaimer">
+          By signing up you agree to our Terms of Service and Privacy Policy.
+        </p>
+
+        <div *ngIf="msgError" class="alert error">{{ msgError }}</div>
+        <div *ngIf="msgSuccess" class="alert success">
+          Registration complete! Redirecting you to the dashboard.
+        </div>
+
+        <button type="button" class="ghost-btn" routerLink="/login">
+          Already have an account? Sign in
+        </button>
+      </form>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,2 @@
+export interface IQuiz {
+}

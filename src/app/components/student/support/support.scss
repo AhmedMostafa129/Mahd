@@ -1,0 +1,196 @@
+@use '../../../app.scss' as *;
+
+.support-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary {
+    margin-left: auto;
+  }
+}
+
+.state {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-radius: 0.75rem;
+  background-color: #f9fafb;
+  color: #4b5563;
+
+  &.state-error {
+    background-color: #fef2f2;
+    color: #b91c1c;
+  }
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  padding: 1.25rem 1.5rem;
+}
+
+.create-card {
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+
+  label {
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+
+  input,
+  textarea {
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.9rem;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.tickets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ticket-card {
+  @extend .card;
+  padding: 1rem 1.25rem;
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+
+    h2 {
+      margin: 0;
+      font-size: 1rem;
+      flex: 1;
+    }
+  }
+
+  .description {
+    margin: 0.25rem 0 0.5rem;
+    font-size: 0.9rem;
+    color: #4b5563;
+  }
+
+  footer {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+}
+
+.status-pill {
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+
+  &.open {
+    background-color: #eef2ff;
+    color: #4338ca;
+  }
+
+  &.closed {
+    background-color: #ecfdf3;
+    color: #15803d;
+  }
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.45rem 1.2rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #4f46e5, #6366f1);
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.pagination {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+
+  .page-btn {
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    background-color: #ffffff;
+    cursor: pointer;
+    font-size: 0.85rem;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .page-info {
+    color: #4b5563;
+  }
+}
+
+@media (max-width: 640px) {
+  .support-page {
+    padding-inline: 1rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .btn-primary {
+      margin-left: 0;
+    }
+  }
+}
+
+

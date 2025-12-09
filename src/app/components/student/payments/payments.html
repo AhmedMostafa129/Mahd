@@ -1,0 +1,81 @@
+<div class="payments-page">
+  <header class="page-header">
+    <h1>Payment History</h1>
+    <p class="subtitle">View all your course payments.</p>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="state state-loading">
+    <p>Loading payments...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="state state-error">
+    <p>{{ error() }}</p>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!loading() && !error() && payments().length === 0"
+    class="state state-empty"
+  >
+    <h3>No payments found</h3>
+    <p>You haven't made any payments yet.</p>
+  </div>
+
+  <!-- Payments Table -->
+  <div *ngIf="!loading() && !error() && payments().length > 0" class="table-wrapper">
+    <table class="payments-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Course</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of payments()">
+          <td>{{ p.createdAt | date : 'medium' }}</td>
+          <td>{{ p.courseId }}</td>
+          <td>{{ formatAmount(p) }}</td>
+          <td>
+            <span class="status-pill" [class.success]="p.status === 'Succeeded'" [class.pending]="p.status === 'Pending'" [class.failed]="p.status === 'Failed'">
+              {{ p.status }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div
+    *ngIf="totalPages() > 1 && !loading() && !error()"
+    class="pagination"
+  >
+    <button
+      type="button"
+      class="page-btn"
+      [disabled]="pageNumber() === 1"
+      (click)="goToPage(pageNumber() - 1)"
+    >
+      Previous
+    </button>
+
+    <span class="page-info">
+      Page {{ pageNumber() }} of {{ totalPages() }}
+    </span>
+
+    <button
+      type="button"
+      class="page-btn"
+      [disabled]="pageNumber() === totalPages()"
+      (click)="goToPage(pageNumber() + 1)"
+    >
+      Next
+    </button>
+  </div>
+</div>
+
+

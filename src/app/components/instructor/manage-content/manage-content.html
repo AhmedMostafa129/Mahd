@@ -1,0 +1,78 @@
+<div class="manage-content-page">
+  <header class="page-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1>Manage Course Content</h1>
+        <div class="badges" *ngIf="course()">
+          <span class="badge" [class.published]="course()!.isPublished" [class.draft]="!course()!.isPublished">
+            {{ course()!.isPublished ? 'Live' : 'Draft' }}
+          </span>
+        </div>
+      </div>
+      <p *ngIf="course()">{{ course()!.title }}</p>
+    </div>
+
+    <div class="header-actions">
+      <button (click)="navigateToCourse()" class="btn-secondary">View Course</button>
+      <button *ngIf="course()" (click)="togglePublishStatus()" [disabled]="publishing()"
+        [class.btn-publish]="!course()!.isPublished" [class.btn-unpublish]="course()!.isPublished">
+        {{ publishing() ? 'Processing...' : (course()!.isPublished ? 'Unpublish' : '🚀 Publish Course') }}
+      </button>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-state">
+    <p>Loading lessons...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="error-state">
+    <p>{{ error() }}</p>
+    <button (click)="loadLessons(courseId() || '')">Retry</button>
+  </div>
+
+  <!-- Lessons List -->
+  <div *ngIf="!loading() && !error()">
+    <div class="section-header">
+      <h2>Course Lessons</h2>
+      <button (click)="addLesson()" class="btn-primary">+ Add Lesson</button>
+    </div>
+
+    <div *ngIf="lessons().length === 0" class="empty-state">
+      <div class="empty-icon">📚</div>
+      <h3>No lessons yet</h3>
+      <p>Add your first lesson to get started</p>
+      <button (click)="addLesson()" class="btn-primary">Add Lesson</button>
+    </div>
+
+    <div *ngIf="lessons().length > 0" class="lessons-table">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Duration</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let lesson of lessons(); let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ lesson.title }}</td>
+            <td>{{ getContentTypeLabel(lesson.contentType) }}</td>
+            <td>{{ lesson.durationMinutes }} min</td>
+            <td class="actions">
+              <button (click)="editLesson(lesson.lessonId)" class="btn-edit">Edit</button>
+              <button (click)="deleteLesson(lesson.lessonId)" [disabled]="deleting() === lesson.lessonId"
+                class="btn-delete">
+                {{ deleting() === lesson.lessonId ? 'Deleting...' : 'Delete' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

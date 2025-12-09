@@ -1,0 +1,111 @@
+<div class="payments-management">
+  <div class="header">
+    <h1>Payments Management</h1>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="statistics-grid" *ngIf="statistics()">
+    <div class="stat-card">
+      <h3>Total Revenue</h3>
+      <p class="amount">{{ formatCurrency(statistics()!.totalRevenue) }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Total Payments</h3>
+      <p class="amount">{{ statistics()!.totalPayments }}</p>
+    </div>
+    <div class="stat-card success">
+      <h3>Successful</h3>
+      <p class="amount">{{ statistics()!.successfulPayments }}</p>
+    </div>
+    <div class="stat-card failed">
+      <h3>Failed</h3>
+      <p class="amount">{{ statistics()!.failedPayments }}</p>
+    </div>
+    <div class="stat-card pending">
+      <h3>Pending</h3>
+      <p class="amount">{{ statistics()!.pendingPayments }}</p>
+    </div>
+  </div>
+
+  <!-- Payments List -->
+  <div class="payments-section">
+    <div class="section-header">
+      <h2>All Payments</h2>
+      <p class="note">Note: Admin payments list endpoint needed. Please use course-specific payments for now.</p>
+    </div>
+
+    <div *ngIf="loading()" class="loading">Loading payments...</div>
+    <div *ngIf="error()" class="error">{{ error() }}</div>
+
+    <div *ngIf="!loading() && !error() && payments().length === 0" class="empty-state">
+      <p>No payments found.</p>
+    </div>
+
+    <table *ngIf="!loading() && !error() && payments().length > 0" class="payments-table">
+      <thead>
+        <tr>
+          <th>Payment ID</th>
+          <th>Student ID</th>
+          <th>Course ID</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payment of payments()">
+          <td>{{ payment.paymentId }}</td>
+          <td>{{ payment.studentId }}</td>
+          <td>{{ payment.courseId }}</td>
+          <td>{{ formatCurrency(payment.amount, payment.currency) }}</td>
+          <td>
+            <span [class]="'status-badge ' + getStatusClass(payment.status)">
+              {{ payment.status }}
+            </span>
+          </td>
+          <td>{{ formatDate(payment.createdAt) }}</td>
+          <td>
+            <button
+              *ngIf="payment.status === 'succeeded' || payment.status === 'completed'"
+              class="btn-refund"
+              (click)="openRefundModal(payment.paymentId)"
+            >
+              Refund
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages() > 1" class="pagination">
+      <button (click)="goToPage(pageNumber() - 1)" [disabled]="pageNumber() === 1">Previous</button>
+      <span>Page {{ pageNumber() }} of {{ totalPages() }}</span>
+      <button (click)="goToPage(pageNumber() + 1)" [disabled]="pageNumber() === totalPages()">Next</button>
+    </div>
+  </div>
+
+  <!-- Refund Modal -->
+  <div *ngIf="refundingPaymentId()" class="modal-overlay" (click)="closeRefundModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Process Refund</h3>
+      <p>Payment ID: {{ refundingPaymentId() }}</p>
+      <div class="form-group">
+        <label>Refund Amount (optional, leave empty for full refund):</label>
+        <input
+          type="number"
+          [(ngModel)]="refundAmount"
+          placeholder="Enter amount"
+          min="0"
+          step="0.01"
+        />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeRefundModal()">Cancel</button>
+        <button class="btn-confirm" (click)="processRefund()">Process Refund</button>
+      </div>
+    </div>
+  </div>
+</div>
+

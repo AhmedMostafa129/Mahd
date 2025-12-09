@@ -1,0 +1,68 @@
+<div class="manage-assignments-page">
+  <header class="page-header">
+    <h1>Manage Exams</h1>
+    <p *ngIf="course()">{{ course()!.title }}</p>
+    <button (click)="navigateToCourse()" class="btn-secondary">← Back to Course</button>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-state">
+    <p>Loading exams...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="error-state">
+    <p>{{ error() }}</p>
+    <button (click)="loadExams(courseId() || '')">Retry</button>
+  </div>
+
+  <!-- Exams List -->
+  <div *ngIf="!loading() && !error()">
+    <div class="section-header">
+      <h2>Course Exams</h2>
+      <button (click)="createExam()" class="btn-primary">+ Create Exam</button>
+    </div>
+
+    <div *ngIf="exams().length === 0" class="empty-state">
+      <div class="empty-icon">📝</div>
+      <h3>No exams yet</h3>
+      <p>Create your first exam for this course</p>
+      <button (click)="createExam()" class="btn-primary">Create Exam</button>
+    </div>
+
+    <div *ngIf="exams().length > 0" class="exams-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Duration</th>
+            <th>Questions</th>
+            <th>Total Marks</th>
+            <th>Passing %</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let exam of exams()">
+            <td>{{ exam.title }}</td>
+            <td>{{ exam.durationMinutes }} min</td>
+            <td>{{ exam.questionsCount }}</td>
+            <td>{{ exam.totalMarks }}</td>
+            <td>{{ exam.passingPercentage }}%</td>
+            <td class="actions">
+              <button (click)="viewExamQuestions(exam.examId)" class="btn-view">Questions</button>
+              <button (click)="editExam(exam.examId)" class="btn-edit">Edit</button>
+              <button
+                (click)="deleteExam(exam.examId)"
+                [disabled]="deleting() === exam.examId"
+                class="btn-delete"
+              >
+                {{ deleting() === exam.examId ? 'Deleting...' : 'Delete' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

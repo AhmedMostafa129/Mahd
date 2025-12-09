@@ -1,0 +1,49 @@
+<div class="certificates-page">
+  <header class="page-header">
+    <h1>My Certificates</h1>
+    <p class="subtitle">Download certificates for your completed courses.</p>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="state state-loading">
+    <p>Loading certificates...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="state state-error">
+    <p>{{ error() }}</p>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!loading() && !error() && certificates().length === 0"
+    class="state state-empty"
+  >
+    <h3>No certificates yet</h3>
+    <p>Complete some courses to earn certificates.</p>
+  </div>
+
+  <!-- Certificates List -->
+  <div *ngIf="!loading() && !error() && certificates().length > 0" class="certificates-grid">
+    <div *ngFor="let c of certificates()" class="certificate-card">
+      <h2 class="course-title">{{ c.courseName || 'Course' }}</h2>
+      <p class="completed-at">
+        Completed on
+        {{ (c.completedAt || c.enrollmentDate) | date : 'mediumDate' }}
+      </p>
+
+      <div class="progress-info">
+        Final Progress: {{ c.progressPercentage | number : '1.0-0' }}%
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="downloadCertificate(c)"
+        [disabled]="downloadingId() === c.enrollmentId"
+      >
+        {{ downloadingId() === c.enrollmentId ? 'Downloading...' : 'Download PDF' }}
+      </button>
+    </div>
+  </div>
+</div>

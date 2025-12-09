@@ -1,0 +1,248 @@
+// Variables
+$primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+$secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+$text-dark: #2d3748;
+$text-light: #718096;
+$border-color: #e2e8f0;
+
+.manage-content-page {
+    min-height: 100vh;
+    background: #f8f9fa;
+    padding: 2rem;
+
+    .page-header {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            border: 2px solid #e2e8f0;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            color: $text-light;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                border-color: #667eea;
+                color: #667eea;
+                background: white;
+            }
+        }
+    }
+
+    // Section Header
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: $text-dark;
+        }
+
+        .btn-primary {
+            background: $secondary-gradient;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+            transition: all 0.3s ease;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+            }
+        }
+    }
+
+    // Loading & Error States
+    .loading-state,
+    .error-state {
+        text-align: center;
+        padding: 4rem;
+        background: white;
+        border-radius: 16px;
+        color: $text-light;
+    }
+
+    .error-state {
+        color: #c53030;
+        background: #fff5f5;
+    }
+
+    // Empty State
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: $text-dark;
+            margin: 0 0 1rem;
+        }
+
+        p {
+            color: $text-light;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+    }
+
+    // Lessons Table
+    .lessons-table {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        animation: fadeInUp 0.5s ease-out;
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+
+            th,
+            td {
+                padding: 1.2rem 1.5rem;
+                text-align: left;
+            }
+
+            th {
+                background: #f8fafc;
+                color: $text-light;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 0.85rem;
+                border-bottom: 1px solid $border-color;
+            }
+
+            td {
+                border-bottom: 1px solid #f1f5f9;
+                color: $text-dark;
+                font-weight: 500;
+            }
+
+            tbody tr {
+                transition: background 0.2s ease;
+
+                &:hover {
+                    background: #f8fafc;
+                }
+
+                &:last-child td {
+                    border-bottom: none;
+                }
+            }
+
+            .actions {
+                display: flex;
+                gap: 0.8rem;
+
+                button {
+                    padding: 0.5rem 1rem;
+                    border-radius: 8px;
+                    border: none;
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+
+                .btn-edit {
+                    background: #edf2f7;
+                    color: $text-dark;
+
+                    &:hover {
+                        background: #e2e8f0;
+                        color: #667eea;
+                    }
+                }
+
+                .btn-delete {
+                    background: #fff5f5;
+                    color: #c53030;
+
+                    &:hover:not(:disabled) {
+                        background: #fed7d7;
+                    }
+
+                    &:disabled {
+                        opacity: 0.5;
+                        cursor: not-allowed;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Keyframes
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .manage-content-page {
+        padding: 1rem;
+
+        .page-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+
+            &::before {
+                width: 100%;
+                height: 6px;
+            }
+        }
+
+        .lessons-table {
+            overflow-x: auto;
+        }
+    }
+}

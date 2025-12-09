@@ -1,0 +1,125 @@
+<div class="course-content-page">
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-state">
+    <p>Loading course content...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="error-state">
+    <p>{{ error() }}</p>
+    <button (click)="loadCourseContent(_route.snapshot.paramMap.get('id') || '')">Retry</button>
+  </div>
+
+  <!-- Course Content -->
+  <div *ngIf="!loading() && !error() && course()" class="content-layout">
+    <!-- Sidebar: Lessons List -->
+    <aside class="lessons-sidebar">
+      <div class="sidebar-header">
+        <button (click)="navigateToCourseDetails()" class="btn-back">← Back to Course</button>
+        <h2>{{ course()!.title }}</h2>
+      </div>
+
+      <div class="progress-section" *ngIf="enrollment()">
+        <div class="progress-bar-container">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="enrollment()!.progressPercentage"></div>
+          </div>
+          <p class="progress-text">
+            {{ enrollment()!.progressPercentage | number : '1.0-0' }}% Complete
+          </p>
+        </div>
+      </div>
+
+      <div class="lessons-list">
+        <div
+          *ngFor="let lesson of lessons(); let i = index"
+          class="lesson-list-item"
+          [class.active]="currentLesson()?.lessonId === lesson.lessonId"
+          [class.completed]="isLessonCompleted(lesson.lessonId)"
+          (click)="selectLesson(lesson)"
+        >
+          <div class="lesson-number">{{ i + 1 }}</div>
+          <div class="lesson-info">
+            <h3>{{ lesson.title }}</h3>
+            <div class="lesson-meta">
+              <span>{{ getContentTypeLabel(lesson.contentType) }}</span>
+              <span>⏱️ {{ lesson.durationMinutes }} min</span>
+            </div>
+          </div>
+          <div class="lesson-status" *ngIf="isLessonCompleted(lesson.lessonId)">✓</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content: Lesson Player -->
+    <main class="lesson-content">
+      <div *ngIf="currentLesson()" class="lesson-player">
+        <div class="lesson-header">
+          <h1>{{ currentLesson()!.title }}</h1>
+          <div class="lesson-meta-header">
+            <span>{{ getContentTypeLabel(currentLesson()!.contentType) }}</span>
+            <span>⏱️ {{ currentLesson()!.durationMinutes }} minutes</span>
+          </div>
+        </div>
+
+        <div class="lesson-media" *ngIf="resolveContentUrl(currentLesson()!.contentUrl)">
+          <div *ngIf="currentLesson()!.contentType === 0" class="video-player">
+            <!-- Video Player -->
+            <video
+              [src]="resolveContentUrl(currentLesson()!.contentUrl)"
+              controls
+              class="video-element"
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
+
+          <div
+            *ngIf="currentLesson()!.contentType === 2 || currentLesson()!.contentType === 3"
+            class="document-viewer"
+          >
+            <!-- PDF or E-Book Viewer -->
+            <iframe
+              [src]="resolveContentUrl(currentLesson()!.contentUrl)"
+              [attr.title]="currentLesson()!.title + ' - Document Viewer'"
+              class="document-iframe"
+            ></iframe>
+          </div>
+
+          <div *ngIf="currentLesson()!.contentType === 4" class="quiz-content">
+            <!-- Quiz Content -->
+            <p>Quiz content will be displayed here</p>
+            <button class="btn-start-quiz">Start Quiz</button>
+          </div>
+
+          <div *ngIf="currentLesson()!.contentType === 1" class="live-session">
+            <!-- Live Session -->
+            <p>Live session content will be displayed here</p>
+          </div>
+        </div>
+
+        <div class="lesson-actions">
+          <button
+            *ngIf="!isLessonCompleted(currentLesson()!.lessonId)"
+            (click)="markLessonComplete(currentLesson()!)"
+            [disabled]="completingLesson() === currentLesson()!.lessonId"
+            class="btn-complete"
+          >
+            {{
+              completingLesson() === currentLesson()!.lessonId
+                ? 'Completing...'
+                : 'Mark as Complete ✓'
+            }}
+          </button>
+          <span *ngIf="isLessonCompleted(currentLesson()!.lessonId)" class="completed-badge"
+            >✓ Completed</span
+          >
+        </div>
+      </div>
+
+      <div *ngIf="!currentLesson()" class="no-lesson-selected">
+        <p>Select a lesson from the sidebar to start learning</p>
+      </div>
+    </main>
+  </div>
+</div>

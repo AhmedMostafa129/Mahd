@@ -1,0 +1,65 @@
+.analytics-container {
+  padding: 2rem;
+  background: #f7fbff;
+  min-height: 80vh;
+}
+.analytics-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+.analytics-header p {
+  margin: 0.25rem 0 1rem;
+  color: #666;
+}
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.metric-card {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+.metric-label {
+  color: #888;
+  font-size: 0.9rem;
+}
+.metric-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+.chart-area .chart-placeholder {
+  height: 220px;
+  background: linear-gradient(90deg, #e6f0ff, #f6fbff);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3b82f6;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.trends {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.trend-item {
+  background: white;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+.trend-label {
+  display: block;
+  color: #888;
+  font-size: 0.85rem;
+}
+.trend-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+}

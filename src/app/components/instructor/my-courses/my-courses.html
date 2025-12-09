@@ -1,0 +1,97 @@
+<div class="instructor-my-courses">
+  <div class="header">
+    <h1>
+      My Courses
+      <span>Manage your content and track performance</span>
+    </h1>
+    <button class="btn-create" (click)="navigateToCreateCourse()">Create New Course</button>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="label">Total Courses</span>
+      <span class="value">{{ totalCount() }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="label">Total Students</span>
+      <span class="value">{{ totalStudents() }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="label">Active Courses</span>
+      <span class="value">{{ activeCourses() }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="label">Total Earnings</span>
+      <span class="value">{{ formatCurrency(totalEarnings()) }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="loading">
+    <div class="spinner"></div>
+    <p>Loading your courses...</p>
+  </div>
+
+  <div *ngIf="error()" class="error">
+    <p>{{ error() }}</p>
+  </div>
+
+  <div *ngIf="!loading() && !error() && courses().length === 0" class="empty-state">
+    <div class="empty-icon">🎓</div>
+    <h3>Start Your Teaching Journey</h3>
+    <p>You haven't created any courses yet. Share your knowledge with the world!</p>
+    <button class="btn-create" (click)="navigateToCreateCourse()">Create Your First Course</button>
+  </div>
+
+  <div *ngIf="!loading() && !error() && courses().length > 0" class="courses-grid">
+    <div *ngFor="let course of courses()" class="course-card">
+      <div class="course-image">
+        <img [src]="course.thumbnailUrl || 'assets/images/course-placeholder.jpg'" [alt]="course.title">
+        <button 
+          [class]="'status-badge btn-status ' + (course.isPublished ? 'published' : 'draft')"
+          (click)="togglePublishStatus(course, $event)"
+          title="Click to toggle status"
+        >
+          {{ course.isPublished ? 'Published' : 'Draft' }} 
+        </button>
+      </div>
+
+      <div class="course-content">
+        <h3>{{ course.title }}</h3>
+        <p class="course-price">{{ formatCurrency(course.price) }}</p>
+
+        <div class="course-stats">
+          <div title="Students">
+            👥 {{ course.enrollmentCount || 0 }}
+          </div>
+          <div title="Lessons">
+            📖 {{ course.lessonsCount || 0 }}
+          </div>
+          <div title="Rating">
+            ⭐ {{ course.averageRating | number:'1.1-1' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="course-actions">
+        <button class="btn-view" (click)="navigateToCourse(course.courseId)">
+          👁️ View
+        </button>
+        <button class="btn-edit" (click)="navigateToEditCourse(course.courseId)">
+          ✏️ Edit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="totalPages() > 1" class="pagination">
+    <button (click)="goToPage(pageNumber() - 1)" [disabled]="pageNumber() === 1">
+      ← Previous
+    </button>
+    <span>Page {{ pageNumber() }} of {{ totalPages() }}</span>
+    <button (click)="goToPage(pageNumber() + 1)" [disabled]="pageNumber() === totalPages()">
+      Next →
+    </button>
+  </div>
+</div>

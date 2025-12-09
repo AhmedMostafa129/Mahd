@@ -1,0 +1,91 @@
+<section class="verify-page">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="verify-shell">
+    <div class="brand-panel">
+      <p class="eyebrow">Learnhub · Email Verification</p>
+      <h1>Check your email</h1>
+      <p class="brand-subtitle">
+        We've sent a 6-digit verification code to your email address. Enter it below to verify your account.
+      </p>
+
+      <ul class="brand-points">
+        <li>
+          <span>📧</span>
+          Check your inbox for the verification code
+        </li>
+        <li>
+          <span>⌛</span>
+          Code expires in 15 minutes
+        </li>
+        <li>
+          <span>🔒</span>
+          Secure verification process
+        </li>
+      </ul>
+    </div>
+
+    <div class="card-panel">
+      <div *ngIf="success()" class="success-card">
+        <div class="success-icon">✓</div>
+        <h2>Email Verified!</h2>
+        <p>Your email has been verified successfully. Redirecting to login...</p>
+      </div>
+
+      <div *ngIf="!success()">
+        <header class="card-header">
+          <p class="badge">Verification</p>
+          <h2>Enter verification code</h2>
+          <p *ngIf="email()">Code sent to <strong>{{ email() }}</strong></p>
+        </header>
+
+        <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()" novalidate>
+          <div class="code-input-group">
+            <input
+              *ngFor="let _ of [0,1,2,3,4,5]; let i = index"
+              #codeInput
+              type="text"
+              inputmode="numeric"
+              maxlength="1"
+              [attr.data-index]="i"
+              (input)="onCodeInput($event, i)"
+              (keydown)="onKeyDown($event, i)"
+              (paste)="onPaste($event)"
+              [disabled]="loading()"
+              class="code-digit"
+            />
+          </div>
+
+          <div *ngIf="error()" class="alert error">
+            {{ error() }}
+          </div>
+
+          <div class="card-footer">
+            <button class="primary-btn" type="submit" [disabled]="!isCodeComplete() || loading()">
+              <span *ngIf="!loading()">Verify Email</span>
+              <span *ngIf="loading()" class="spinner"></span>
+              <span *ngIf="loading()">Verifying...</span>
+            </button>
+
+            <div class="resend-section">
+              <p>Didn't receive the code?</p>
+              <button
+                type="button"
+                class="ghost-btn"
+                (click)="resendCode()"
+                [disabled]="resending() || !email()"
+              >
+                {{ resending() ? 'Sending...' : 'Resend Code' }}
+              </button>
+            </div>
+
+            <button class="link-btn" type="button" (click)="goToLogin()">
+              Back to Login
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

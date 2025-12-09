@@ -1,0 +1,132 @@
+<div class="quiz-questions-page">
+  <header class="page-header">
+    <h1>Manage Exam Questions</h1>
+    <button (click)="navigateToExam()" class="btn-secondary">← Back to Exam</button>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-state">
+    <p>Loading questions...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error() && !loading()" class="error-state">
+    <p>{{ error() }}</p>
+  </div>
+
+  <!-- Questions List & Add Form -->
+  <div *ngIf="!loading() && !error()">
+    <div class="section-header">
+      <h2>Exam Questions</h2>
+      <button (click)="toggleAddForm()" class="btn-primary">
+        {{ showAddForm() ? 'Cancel' : '+ Add Question' }}
+      </button>
+    </div>
+
+    <!-- Add Question Form -->
+    <div *ngIf="showAddForm()" class="add-question-form">
+      <h3>Add New Question</h3>
+      
+      <div class="form-group">
+        <label>Question Text *</label>
+        <textarea
+          [(ngModel)]="questionForm.questionText"
+          rows="3"
+          placeholder="Enter question text"
+          class="form-textarea"
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Question Type *</label>
+          <select [(ngModel)]="questionForm.questionType" class="form-select">
+            <option *ngFor="let opt of questionTypeOptions" [value]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Mark *</label>
+          <input
+            type="number"
+            [(ngModel)]="questionForm.mark"
+            min="0.5"
+            step="0.5"
+            class="form-input"
+          />
+        </div>
+      </div>
+
+      <!-- Options for MCQ and TrueFalse -->
+      <div *ngIf="questionForm.questionType === 'MCQ' || questionForm.questionType === 'TrueFalse'">
+        <div class="form-group">
+          <label>Options *</label>
+          <div *ngFor="let option of questionForm.options; let i = index" class="option-row">
+            <input
+              type="text"
+              [(ngModel)]="option.optionText"
+              [placeholder]="questionForm.questionType === 'TrueFalse' ? (i === 0 ? 'True' : 'False') : 'Option text'"
+              class="form-input"
+            />
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="option.isCorrect" />
+              <span>Correct</span>
+            </label>
+            <button type="button" (click)="removeOption(i)" class="btn-remove">Remove</button>
+          </div>
+          <button type="button" (click)="addOption()" class="btn-add-option">+ Add Option</button>
+        </div>
+      </div>
+
+      <!-- Correct Answer for Text questions -->
+      <div *ngIf="questionForm.questionType === 'Text'" class="form-group">
+        <label>Correct Answer *</label>
+        <input
+          type="text"
+          [(ngModel)]="questionForm.correctAnswer"
+          placeholder="Enter correct answer"
+          class="form-input"
+        />
+      </div>
+
+      <div class="form-actions">
+        <button type="button" (click)="toggleAddForm()" class="btn-secondary">Cancel</button>
+        <button type="button" (click)="submitQuestion()" class="btn-primary">Add Question</button>
+      </div>
+    </div>
+
+    <!-- Questions List -->
+    <div *ngIf="questions().length === 0 && !showAddForm()" class="empty-state">
+      <div class="empty-icon">📝</div>
+      <h3>No questions yet</h3>
+      <p>Add your first question to get started</p>
+      <button (click)="toggleAddForm()" class="btn-primary">Add Question</button>
+    </div>
+
+    <div *ngIf="questions().length > 0" class="questions-list">
+      <div *ngFor="let question of questions(); let i = index" class="question-card">
+        <div class="question-header">
+          <span class="question-number">Q{{ i + 1 }}</span>
+          <span class="question-type">{{ question.questionType }}</span>
+          <span class="question-mark">{{ question.mark }} marks</span>
+        </div>
+        <p class="question-text">{{ question.questionText }}</p>
+        
+        <div *ngIf="question.options.length > 0" class="question-options">
+          <div *ngFor="let option of question.options" class="option-item" [class.correct]="option.isCorrect">
+            <span>{{ option.optionText }}</span>
+            <span *ngIf="option.isCorrect" class="correct-badge">✓ Correct</span>
+          </div>
+        </div>
+
+        <div class="question-actions">
+          <button (click)="deleteQuestion(question.questionId)" [disabled]="deleting() === question.questionId" class="btn-delete">
+            {{ deleting() === question.questionId ? 'Deleting...' : 'Delete' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

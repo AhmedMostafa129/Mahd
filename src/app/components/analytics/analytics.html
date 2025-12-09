@@ -1,0 +1,23 @@
+<div class="analytics-container">
+  <header class="analytics-header">
+    <h1>Analytics</h1>
+    <p>Overview of platform performance and learner activity</p>
+  </header>
+
+  <section class="metrics-grid">
+    <article *ngFor="let m of metrics" class="metric-card">
+      <p class="metric-label">{{ m.label }}</p>
+      <p class="metric-value">{{ m.value }}</p>
+    </article>
+  </section>
+
+  <section class="chart-area">
+    <div class="chart-placeholder">Trend chart placeholder (mock)</div>
+    <div class="trends">
+      <div *ngFor="let t of trends" class="trend-item">
+        <span class="trend-label">{{ t.label }}</span>
+        <span class="trend-value">{{ t.value }}</span>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,80 @@
+.content-list-container {
+  min-height: 80vh;
+  padding: 2rem;
+  background: #fbfdff;
+}
+
+.content-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.75rem;
+  }
+  p {
+    margin: 0;
+    color: #666;
+  }
+
+  .back-button {
+    background: none;
+    border: none;
+    color: #0066cc;
+    cursor: pointer;
+  }
+}
+
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #e6e6e6;
+}
+.filter-select {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+}
+
+.items-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+.content-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+.content-card .meta {
+  color: #888;
+  font-size: 0.9rem;
+}
+.status {
+  text-transform: capitalize;
+  font-weight: 600;
+}
+.status.published {
+  color: #27ae60;
+}
+.view-btn {
+  background: #0066cc;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+}

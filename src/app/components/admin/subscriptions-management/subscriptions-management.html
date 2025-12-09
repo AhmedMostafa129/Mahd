@@ -1,0 +1,125 @@
+<div class="subscriptions-management">
+  <div class="header">
+    <h1>Subscriptions Management</h1>
+    <button class="btn-create" (click)="openCreateModal()">Create Package</button>
+  </div>
+
+  <div class="packages-section">
+    <div class="section-header">
+      <h2>Subscription Packages</h2>
+      <p class="count">Total: {{ totalCount() }}</p>
+    </div>
+
+    <div *ngIf="loading()" class="loading">Loading packages...</div>
+    <div *ngIf="error()" class="error">{{ error() }}</div>
+
+    <div *ngIf="!loading() && !error() && packages().length === 0" class="empty-state">
+      <p>No packages found. Create your first package!</p>
+    </div>
+
+    <div *ngIf="!loading() && !error() && packages().length > 0" class="packages-grid">
+      <div *ngFor="let pkg of packages()" class="package-card">
+        <div class="package-header">
+          <h3>{{ pkg.name }}</h3>
+          <div class="package-actions">
+            <button class="btn-edit" (click)="openEditModal(pkg)">Edit</button>
+            <button class="btn-delete" (click)="deletePackage(pkg.packageId)">Delete</button>
+          </div>
+        </div>
+        <div class="package-body">
+          <p class="description">{{ pkg.description }}</p>
+          <div class="package-details">
+            <div class="detail-item">
+              <span class="label">Price:</span>
+              <span class="value price">{{ formatCurrency(pkg.price) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Duration:</span>
+              <span class="value">{{ pkg.durationDays }} days</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Created:</span>
+              <span class="value">{{ formatDate(pkg.createdAt) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages() > 1" class="pagination">
+      <button (click)="goToPage(pageNumber() - 1)" [disabled]="pageNumber() === 1">Previous</button>
+      <span>Page {{ pageNumber() }} of {{ totalPages() }}</span>
+      <button (click)="goToPage(pageNumber() + 1)" [disabled]="pageNumber() === totalPages()">Next</button>
+    </div>
+  </div>
+
+  <!-- Create Modal -->
+  <div *ngIf="showCreateModal()" class="modal-overlay" (click)="closeCreateModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Create Subscription Package</h3>
+      <div class="form-group">
+        <label>Package Name *</label>
+        <input type="text" [(ngModel)]="formData.name" placeholder="Enter package name" required />
+      </div>
+      <div class="form-group">
+        <label>Description *</label>
+        <textarea
+          [(ngModel)]="formData.description"
+          placeholder="Enter package description"
+          rows="4"
+          required
+        ></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Price (USD) *</label>
+          <input type="number" [(ngModel)]="formData.price" placeholder="0.00" min="0" step="0.01" required />
+        </div>
+        <div class="form-group">
+          <label>Duration (Days) *</label>
+          <input type="number" [(ngModel)]="formData.durationDays" placeholder="30" min="1" required />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeCreateModal()">Cancel</button>
+        <button class="btn-confirm" (click)="createPackage()">Create Package</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div *ngIf="showEditModal()" class="modal-overlay" (click)="closeEditModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Edit Subscription Package</h3>
+      <div class="form-group">
+        <label>Package Name *</label>
+        <input type="text" [(ngModel)]="formData.name" placeholder="Enter package name" required />
+      </div>
+      <div class="form-group">
+        <label>Description *</label>
+        <textarea
+          [(ngModel)]="formData.description"
+          placeholder="Enter package description"
+          rows="4"
+          required
+        ></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Price (USD) *</label>
+          <input type="number" [(ngModel)]="formData.price" placeholder="0.00" min="0" step="0.01" required />
+        </div>
+        <div class="form-group">
+          <label>Duration (Days) *</label>
+          <input type="number" [(ngModel)]="formData.durationDays" placeholder="30" min="1" required />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeEditModal()">Cancel</button>
+        <button class="btn-confirm" (click)="updatePackage()">Update Package</button>
+      </div>
+    </div>
+  </div>
+</div>
+

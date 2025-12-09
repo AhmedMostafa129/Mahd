@@ -1,0 +1,148 @@
+<div class="exam-page" *ngIf="!loading()">
+  <header class="page-header" *ngIf="exam() as e">
+    <div class="header-content">
+      <div class="exam-info">
+        <h1>{{ e.title }}</h1>
+        <div class="meta">
+          <span>Total Marks: {{ e.totalMarks }}</span>
+        </div>
+      </div>
+
+      <div class="timer-display" [class.low-time]="timeLeft() < 60">
+        <span class="label">Time Left</span>
+        <span class="time">{{ formattedTime }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loading & Error -->
+  <div *ngIf="loading()" class="state state-loading">
+    <p>Loading exam...</p>
+  </div>
+
+  <div *ngIf="error() && !loading()" class="state state-error">
+    <p>{{ error() }}</p>
+  </div>
+
+  <!-- Questions Wrapper -->
+  <div *ngIf="!loading() && !error() && questions().length > 0" class="questions-wrapper">
+    <!-- Sidebar / Navigator -->
+    <aside class="question-navigator">
+      <h3>Questions</h3>
+      <div class="grid">
+        <button
+          *ngFor="let q of questions(); let i = index"
+          class="nav-btn"
+          [class.active]="currentQuestionIndex() === i"
+          [class.answered]="isQuestionAnswered(q.questionId)"
+          (click)="goToQuestion(i)"
+        >
+          {{ i + 1 }}
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="question-area">
+      <div class="question-card">
+        <div class="question-header">
+          <span class="number"
+            >Question {{ currentQuestionIndex() + 1 }} of {{ questions().length }}</span
+          >
+          <span class="type">{{ questions()[currentQuestionIndex()].questionType }}</span>
+          <span class="mark">{{ questions()[currentQuestionIndex()].mark }} marks</span>
+        </div>
+
+        <p class="question-text">{{ questions()[currentQuestionIndex()].questionText }}</p>
+
+        <!-- MCQ / TrueFalse -->
+        <div
+          *ngIf="
+            questions()[currentQuestionIndex()].options &&
+            questions()[currentQuestionIndex()].options.length > 0
+          "
+          class="options"
+        >
+          <label
+            *ngFor="let opt of questions()[currentQuestionIndex()].options"
+            class="option"
+            [class.selected]="
+              answers()[
+                questions()[currentQuestionIndex()].questionId
+              ]?.selectedOptionIds?.includes(opt.optionId || '')
+            "
+          >
+            <input
+              type="radio"
+              [name]="questions()[currentQuestionIndex()].questionId"
+              [checked]="
+                answers()[
+                  questions()[currentQuestionIndex()].questionId
+                ]?.selectedOptionIds?.includes(opt.optionId || '')
+              "
+              (change)="
+                toggleOption(questions()[currentQuestionIndex()].questionId, opt.optionId || '')
+              "
+            />
+            <span class="radio-mark"></span>
+            <span class="opt-text">{{ opt.optionText }}</span>
+          </label>
+        </div>
+
+        <!-- Text Answer -->
+        <div
+          *ngIf="
+            !questions()[currentQuestionIndex()].options ||
+            questions()[currentQuestionIndex()].options.length === 0
+          "
+          class="text-answer"
+        >
+          <label
+            for="answer-{{ questions()[currentQuestionIndex()].questionId }}"
+            class="answer-label"
+            >Your answer</label
+          >
+          <textarea
+            id="answer-{{ questions()[currentQuestionIndex()].questionId }}"
+            name="answer-{{ questions()[currentQuestionIndex()].questionId }}"
+            rows="5"
+            placeholder="Type your answer here..."
+            aria-label="Answer for question {{ currentQuestionIndex() + 1 }}"
+            [ngModel]="answers()[questions()[currentQuestionIndex()].questionId]?.answerText || ''"
+            (ngModelChange)="
+              updateTextAnswer(questions()[currentQuestionIndex()].questionId, $event)
+            "
+          ></textarea>
+        </div>
+
+        <!-- Navigation Footer inside Card -->
+        <div class="card-footer">
+          <button
+            class="btn-nav"
+            (click)="previousQuestion()"
+            [disabled]="currentQuestionIndex() === 0"
+          >
+            Previous
+          </button>
+
+          <button
+            *ngIf="currentQuestionIndex() < questions().length - 1"
+            class="btn-nav btn-next"
+            (click)="nextQuestion()"
+          >
+            Next
+          </button>
+
+          <button
+            *ngIf="currentQuestionIndex() === questions().length - 1"
+            class="btn-submit"
+            (click)="submitExam()"
+            [disabled]="submitting()"
+          >
+            {{ submitting() ? 'Submitting...' : 'Submit Exam' }}
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

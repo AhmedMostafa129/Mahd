@@ -1,0 +1,158 @@
+<div class="instructor-dashboard">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">LH</div>
+      <div class="brand-info">
+        <h1>LearnHub</h1>
+        <p>Instructor Panel</p>
+      </div>
+      <div class="profile-quick">
+        <ng-container *ngIf="dashboardData()">
+          <a href="#" (click)="$event.preventDefault(); navigateToProfile(dashboardData()?.instructorId, $event)">
+            <img *ngIf="profilePhotoUrl(); else initials" [src]="profilePhotoUrl()" alt="avatar" class="profile-avatar" />
+            <ng-template #initials>
+              <span class="profile-initial">{{ dashboardData()?.instructorName?.split(' ')?.[0] || 'Me' }}</span>
+            </ng-template>
+            <span class="profile-label">View Public Profile</span>
+          </a>
+        </ng-container>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-item active">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-item" (click)="navigateToCourses()">
+        <span class="nav-icon">📚</span>
+        <span>My Courses</span>
+      </a>
+      <a class="nav-item" (click)="$event.preventDefault(); navigateToProfile(dashboardData()?.instructorId, $event)">
+        <span class="nav-icon">👤</span>
+        <span>Public Profile</span>
+      </a>
+      <a class="nav-item" (click)="navigateToExams()">
+        <span class="nav-icon">📝</span>
+        <span>My Exams</span>
+      </a>
+      <a class="nav-item" (click)="navigateToGroups()">
+        <span class="nav-icon">👥</span>
+        <span>Student Groups</span>
+      </a>
+      <a class="nav-item" (click)="navigateToEarnings()">
+        <span class="nav-icon">💰</span>
+        <span>Earnings & Payouts</span>
+      </a>
+    </nav>
+
+    <button class="sign-out" (click)="handleSignOut()">
+      Sign Out
+    </button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="dashboard">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div>
+        <h1 class="page-title">Welcome back, <a href="#" (click)="$event.preventDefault(); navigateToProfile(dashboardData()?.instructorId, $event)">{{ dashboardData()?.instructorName?.split(' ')?.[0] || 'Instructor' }}</a>! 👋
+        </h1>
+        <p class="page-subtitle">Here's what's happening with your courses today.</p>
+      </div>
+      <button class="btn-primary" (click)="navigateToCreateCourse()">Create New Course</button>
+    </header>
+
+    <!-- Loading State -->
+    <div *ngIf="loading()" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your dashboard...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error() && !loading()" class="error-state">
+      <p>{{ error() }}</p>
+      <button class="btn-primary" (click)="loadDashboardData()">Retry Loading</button>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div *ngIf="!loading() && !error() && dashboardData()">
+
+      <!-- Stats Grid -->
+      <section class="summary-row">
+        <article class="summary-card">
+          <p class="summary-label">Total Courses</p>
+          <p class="summary-value">{{ stats.totalCourses }}</p>
+        </article>
+
+        <article class="summary-card">
+          <p class="summary-label">Active Courses</p>
+          <p class="summary-value">{{ stats.publishedCourses }}</p>
+        </article>
+
+        <article class="summary-card">
+          <p class="summary-label">Total Students</p>
+          <p class="summary-value">{{ stats.totalStudents }}</p>
+        </article>
+
+        <article class="summary-card">
+          <p class="summary-label">Total Revenue</p>
+          <p class="summary-value">{{ formatRevenue(stats.totalRevenue) }}</p>
+        </article>
+
+        <article class="summary-card">
+          <p class="summary-label">Rating</p>
+          <p class="summary-value">⭐ {{ stats.averageRating | number:'1.1-1' }}</p>
+        </article>
+      </section>
+
+      <!-- Revenue Chart -->
+      <section class="content-section" *ngIf="revenueByMonth.length > 0">
+        <div class="section-header">
+          <h2>Revenue Overview</h2>
+        </div>
+        <div class="revenue-chart">
+          <div class="chart-container">
+            <div *ngFor="let month of revenueByMonth" class="chart-bar">
+              <div class="bar" [style.height.%]="getRevenueHeight(month.revenue)">
+                <span class="bar-value">{{ formatRevenue(month.revenue) }}</span>
+              </div>
+              <span class="bar-label">{{ getMonthName(month.month) }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Top Courses -->
+      <section class="content-section">
+        <div class="section-header">
+          <h2>Top Performing Courses</h2>
+          <button class="btn-secondary" (click)="navigateToCourses()">View All Courses</button>
+        </div>
+
+        <div *ngIf="topCourses.length === 0" class="empty-state">
+          <div class="empty-icon">🚀</div>
+          <h3>No courses yet</h3>
+          <p>Create your first course to start seeing insights here.</p>
+          <button class="btn-primary" style="margin-top: 1rem;" (click)="navigateToCreateCourse()">Get Started</button>
+        </div>
+
+        <div *ngIf="topCourses.length > 0" class="courses-list">
+          <div *ngFor="let course of topCourses" class="course-card" (click)="navigateToCourse(course.courseId)">
+            <div>
+              <h3>{{ course.title }}</h3>
+              <div class="course-stats">
+                <span class="stat-item"><strong>👥 {{ course.enrollmentCount }}</strong> Students</span>
+                <span class="stat-item"><strong>💰 {{ formatRevenue(course.revenue) }}</strong> Revenue</span>
+                <span class="stat-item"><strong>⭐ {{ course.averageRating | number:'1.1-1' }}</strong> Rating</span>
+              </div>
+            </div>
+            <button class="btn-secondary"></button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>

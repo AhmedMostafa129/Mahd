@@ -1,0 +1,126 @@
+<div class="course-reviews-section">
+    <div class="reviews-header">
+        <h2>Student Reviews</h2>
+        <p *ngIf="totalCount() > 0" class="reviews-count">{{ totalCount() }} {{ totalCount() === 1 ? 'Review' :
+            'Reviews' }}</p>
+    </div>
+
+    <!-- Add Review Button -->
+    <div class="add-review-section">
+        <button *ngIf="!showReviewForm()" (click)="toggleReviewForm()" class="btn-add-review">
+            ✏️ Write a Review
+        </button>
+    </div>
+
+    <!-- Review Form -->
+    <div *ngIf="showReviewForm()" class="review-form-container">
+        <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="review-form">
+            <h3>Share Your Experience</h3>
+
+            <!-- Star Rating -->
+            <div class="rating-input">
+                <label>Your Rating</label>
+                <div class="stars-input">
+                    <span *ngFor="let star of getRatingStars(5)" class="star"
+                        [class.filled]="star <= (hoveredRating() || reviewForm.get('rating')?.value)"
+                        (click)="setRating(star)" (mouseenter)="onMouseEnter(star)" (mouseleave)="onMouseLeave()">
+                        ⭐
+                    </span>
+                </div>
+            </div>
+
+            <!-- Comment -->
+            <div class="form-group">
+                <label for="comment">Your Review</label>
+                <textarea id="comment" formControlName="comment" rows="5"
+                    placeholder="Share your thoughts about this course..." class="form-control"></textarea>
+                <small class="char-count">
+                    {{ reviewForm.get('comment')?.value?.length || 0 }} / 500
+                </small>
+                <div *ngIf="reviewForm.get('comment')?.touched && reviewForm.get('comment')?.errors"
+                    class="error-message">
+                    <span *ngIf="reviewForm.get('comment')?.errors?.['required']">Review comment is required</span>
+                    <span *ngIf="reviewForm.get('comment')?.errors?.['minlength']">Review must be at least 10
+                        characters</span>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="button" (click)="toggleReviewForm()" class="btn-cancel" [disabled]="submitting()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn-submit" [disabled]="reviewForm.invalid || submitting()">
+                    {{ submitting() ? 'Submitting...' : 'Submit Review' }}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error()" class="error-alert">
+        {{ error() }}
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading()" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading reviews...</p>
+    </div>
+
+    <!-- Reviews List -->
+    <div *ngIf="!loading()" class="reviews-list">
+        <!-- Empty State -->
+        <div *ngIf="reviews().length === 0" class="empty-reviews">
+            <div class="empty-icon">📝</div>
+            <h3>No Reviews Yet</h3>
+            <p>Be the first to review this course!</p>
+        </div>
+
+        <!-- Review Items -->
+        <div *ngFor="let review of reviews()" class="review-item">
+            <div class="review-header">
+                <div class="reviewer-info">
+                    <div class="reviewer-avatar">{{ review.studentName?.charAt(0) || 'U' }}</div>
+                    <div class="reviewer-details">
+                        <h4>{{ review.studentName || 'Anonymous' }}</h4>
+                        <span class="review-date">{{ formatDate(review.createdAt) }}</span>
+                    </div>
+                </div>
+
+                <div class="review-rating">
+                    <span *ngFor="let star of getRatingStars(5)" class="star" [class.filled]="star <= review.rating">
+                        ⭐
+                    </span>
+                    <span class="rating-number">{{ review.rating }}/5</span>
+                </div>
+            </div>
+
+            <div class="review-body">
+                <p>{{ review.comment }}</p>
+            </div>
+
+            <div class="review-actions" *ngIf="canDeleteReview(review)">
+                <button (click)="deleteReview(review.reviewId)" class="btn-delete">
+                    🗑️ Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages() > 1" class="pagination">
+        <button (click)="onPageChange(pageNumber() - 1)" [disabled]="pageNumber() === 1" class="pagination-button">
+            ← Previous
+        </button>
+
+        <span class="pagination-info">
+            Page {{ pageNumber() }} of {{ totalPages() }}
+        </span>
+
+        <button (click)="onPageChange(pageNumber() + 1)" [disabled]="pageNumber() === totalPages()"
+            class="pagination-button">
+            Next →
+        </button>
+    </div>
+</div>

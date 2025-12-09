@@ -1,0 +1,136 @@
+<div class="upload-lecture-page">
+  <form *ngIf="!loading()" (ngSubmit)="onSubmit()" class="lecture-form" novalidate>
+    <header class="page-header">
+      <h1>{{ isEditMode() ? 'Edit Lesson' : 'Add New Lesson' }}</h1>
+      <p>Share your knowledge by adding high-quality content</p>
+    </header>
+
+    <!-- Error Message -->
+    <div *ngIf="error()" class="error-message">⚠️ {{ error() }}</div>
+
+    <!-- Title -->
+    <div class="form-group">
+      <label for="title">Lesson Title *</label>
+      <input
+        type="text"
+        id="title"
+        [(ngModel)]="lessonData.title"
+        name="title"
+        required
+        placeholder="e.g. Introduction to Variables"
+        class="form-input"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="form-row">
+      <!-- Content Type -->
+      <div class="form-group half-width">
+        <label for="contentType">Content Type *</label>
+        <div class="select-wrapper">
+          <select
+            id="contentType"
+            [(ngModel)]="lessonData.contentType"
+            name="contentType"
+            required
+            class="form-select"
+          >
+            <option *ngFor="let opt of contentTypeOptions" [value]="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Duration -->
+      <div class="form-group half-width">
+        <label for="durationMinutes">Duration (Minutes) *</label>
+        <div class="input-with-icon">
+          <span class="prefix">⏱️</span>
+          <input
+            type="number"
+            id="durationMinutes"
+            [(ngModel)]="lessonData.durationMinutes"
+            name="durationMinutes"
+            required
+            min="0"
+            placeholder="0"
+            class="form-input"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Content URL -->
+    <div class="form-group">
+      <label for="contentUrl">Content URL (Optional)</label>
+      <input
+        type="url"
+        id="contentUrl"
+        [(ngModel)]="lessonData.contentUrl"
+        name="contentUrl"
+        placeholder="https://example.com/video.mp4"
+        class="form-input"
+      />
+
+      <!-- File upload input (video or PDF) -->
+      <div class="file-upload">
+        <label for="fileInput">Upload File (Video / PDF)</label>
+        <input
+          id="fileInput"
+          type="file"
+          (change)="onFileSelected($event)"
+          [accept]="lessonData.contentType === 2 ? 'application/pdf' : 'video/*'"
+        />
+        <div class="upload-controls">
+          <span *ngIf="selectedFile()">Selected: {{ selectedFile()!.name }}</span>
+          <button
+            type="button"
+            class="btn-small"
+            (click)="uploadSelectedFile()"
+            [disabled]="uploadInProgress() || !selectedFile()"
+          >
+            {{ uploadInProgress() ? 'Uploading...' : 'Upload' }}
+          </button>
+        </div>
+        <div *ngIf="uploadError()" class="error-message">{{ uploadError() }}</div>
+      </div>
+
+      <!-- Video / PDF Preview -->
+      <div
+        *ngIf="previewUrl() && lessonData.contentType === 0"
+        class="content-preview video-preview"
+      >
+        <p>Video Preview:</p>
+        <video [src]="previewUrl()" controls onerror="this.style.display='none'"></video>
+      </div>
+      <div *ngIf="previewUrl() && lessonData.contentType === 2" class="content-preview pdf-preview">
+        <p>PDF Preview:</p>
+        <iframe [src]="previewUrl()" frameborder="0" width="100%" height="500px"></iframe>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" (click)="cancel()" class="btn-secondary">Cancel</button>
+      <button type="submit" [disabled]="submitting()" class="btn-primary">
+        {{
+          submitting()
+            ? isEditMode()
+              ? 'Updating...'
+              : 'Creating...'
+            : isEditMode()
+            ? 'Update Lesson'
+            : 'Create
+        Lesson'
+        }}
+      </button>
+    </div>
+  </form>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading lesson details...</p>
+  </div>
+</div>

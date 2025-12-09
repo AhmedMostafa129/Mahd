@@ -1,0 +1,49 @@
+<div class="earnings-page">
+  <div class="header">
+    <h1>Earnings</h1>
+  </div>
+
+  <div *ngIf="loading()" class="loading">Loading earnings...</div>
+  <div *ngIf="error()" class="error">{{ error() }}</div>
+
+  <div *ngIf="!loading() && !error()" class="earnings-content">
+    <!-- Total Revenue Card -->
+    <div class="revenue-card">
+      <h2>Total Revenue</h2>
+      <p class="revenue-amount">{{ formatCurrency(totalRevenue()) }}</p>
+    </div>
+
+    <!-- Courses List -->
+    <div class="courses-section">
+      <h2>Courses Earnings</h2>
+      <div *ngIf="courses().length === 0" class="empty-state">
+        <p>No courses yet</p>
+      </div>
+      <div *ngIf="courses().length > 0" class="courses-list">
+        <div *ngFor="let course of courses()" class="course-item" (click)="loadPaymentsForCourse(course.courseId)">
+          <div class="course-info">
+            <h3>{{ course.title }}</h3>
+            <p>{{ course.enrollmentCount || 0 }} enrollments</p>
+          </div>
+          <div class="course-revenue">
+            {{ formatCurrency(course.price * (course.enrollmentCount || 0)) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payments List -->
+    <div *ngIf="selectedCourseId() && payments().length > 0" class="payments-section">
+      <h2>Recent Payments</h2>
+      <div class="payments-list">
+        <div *ngFor="let payment of payments()" class="payment-item">
+          <div class="payment-info">
+            <span class="payment-id">{{ payment.paymentId }}</span>
+            <span class="payment-date">{{ formatDate(payment.createdAt) }}</span>
+          </div>
+          <div class="payment-amount">{{ formatCurrency(payment.amount) }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
